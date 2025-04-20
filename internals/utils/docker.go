@@ -130,9 +130,9 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	return res.ID, nil
 }
 
-func InvokeFunction(container_ip string, params map[string]interface{}) {
+func InvokeFunction(container_ip string, params map[string]interface{}) (map[string]interface{}, error) {
 	// functionality to execute container functions
-
+	return MakeHttpRequest(container_ip, 80, params)
 }
 
 // set of util functions;
