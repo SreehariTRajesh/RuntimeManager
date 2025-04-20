@@ -10,6 +10,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
+	"github.com/google/uuid"
 )
 
 // Following class contains utils for docker
@@ -128,6 +129,7 @@ func ExecCommandContainer() {
 	// functionality to execute container functions
 }
 
+// set of util functions;
 func getCoreSet(cores []int) string {
 	core_array := make([]string, len(cores))
 	for i, core := range cores {
@@ -136,6 +138,8 @@ func getCoreSet(cores []int) string {
 	return strings.Join(core_array, ",")
 }
 
-func AssignName() {
-	// assign a name for the container -> name must be unique
+// assign a name for the container -> name must be unique
+func AssignName() string {
+	unique_id := uuid.New().String()
+	return unique_id[:16]
 }
