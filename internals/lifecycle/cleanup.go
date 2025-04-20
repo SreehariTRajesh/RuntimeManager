@@ -25,6 +25,6 @@ func WaitForShutDown() {
 	for _, cleanable := range cleanables {
 		cleanable.Cleanup()
 	}
-	log.Println("initialization complete, exiting")
+	log.Println("cleanup complete, exiting")
 	os.Exit(0)
 }
