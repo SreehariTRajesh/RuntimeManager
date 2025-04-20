@@ -8,7 +8,10 @@ type CreateFunctionRequest struct {
 }
 
 type CreateFunctionResponse struct {
-	
+	FunctionName string `json:"function_name"`
+	ContainerId  string `json:"container_id"`
+	ContainerIP  string `json:"container_ip"`
+	Error        string `json:"error_message"`
 }
 
 type MigrateFunctionRequest struct {
