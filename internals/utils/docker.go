@@ -1,8 +1,13 @@
 package utils
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -125,8 +130,9 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	return res.ID, nil
 }
 
-func ExecCommandContainer() {
+func InvokeFunction(container_ip string, params map[string]interface{}) {
 	// functionality to execute container functions
+
 }
 
 // set of util functions;
@@ -142,4 +148,49 @@ func getCoreSet(cores []int) string {
 func AssignName() string {
 	unique_id := uuid.New().String()
 	return unique_id[:16]
+}
+
+func MakeHttpRequest(ip string, port int, params map[string]interface{}) (map[string]interface{}, error) {
+	host := fmt.Sprintf("%s:%d", ip, port)
+	path := "/invoke"
+	scheme := "http"
+	baseURL := &url.URL{
+		Scheme: scheme,
+		Host:   host,
+		Path:   path,
+	}
+	http_url := baseURL.String()
+	request_body, err := json.Marshal(params)
+	if err != nil {
+		return nil, fmt.Errorf("error while marshalling the request body %v: %w", params, err)
+	}
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", http_url, bytes.NewBuffer(request_body))
+
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	res, err := client.Do(req)
+
+	if err != nil {
+		return nil, fmt.Errorf("error making http request: %w", err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return nil, fmt.Errorf("error while reading response: %w", err)
+	}
+
+	var response map[string]interface{}
+	err = json.Unmarshal(body, &response)
+
+	if err != nil {
+		return nil, fmt.Errorf("error while umarshalling json response: %w", err)
+	}
+
+	return response, nil
 }
