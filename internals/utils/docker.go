@@ -195,8 +195,8 @@ func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any
 	return response, nil
 }
 
-func MigrateContainer(dest_ip string, check_point_dir string) {
-
+func MigrateContainer(source_node int, dest_node int) {
+	
 }
 
 func StartMigratedContainer(container_id string, image_name string) error {

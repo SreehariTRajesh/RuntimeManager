@@ -15,9 +15,13 @@ type CreateFunctionResponse struct {
 }
 
 type MigrateFunctionRequest struct {
+	SourceNode      string `json:"source_node"`
+	DestinationNode string `json:"destination_node"`
 }
 
 type MigrateFunctionResponse struct {
+	Message string `json:"message"`
+	Error   bool   `json:"error"`
 }
 
 type InvokeFunctionRequest struct {
@@ -27,11 +31,14 @@ type InvokeFunctionRequest struct {
 
 type InvokeFunctionResponse struct {
 	Result map[string]any `json:"result"`
-	Error  string         `json:"error"`
+	Error  bool           `json:"error"`
 }
 
 type DeleteFunctionRequest struct {
+	ContainerIds []string `json:"container_ids"`
 }
 
 type DeleteFunctionResponse struct {
+	Message string `json:"result"`
+	Error   bool   `json:"error"`
 }
