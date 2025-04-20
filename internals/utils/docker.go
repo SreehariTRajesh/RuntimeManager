@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -195,8 +196,31 @@ func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any
 	return response, nil
 }
 
-func MigrateContainer(source_ip int, dest_ip int) {
+func MigrateContainer(source_ip int, dest_ip int, container_id string) error {
+	ctx := context.Background()
 
+	cli, err := client.NewClientWithOpts(client.FromEnv)
+
+	if err != nil {
+		return fmt.Errorf("error creating a docker client: %w", err)
+	}
+
+	checkPointOpts := types.CheckpointCreateOptions{
+		CheckpointID: "migration-checkpoint",
+		Exit:         true,
+	}
+
+	if err := cli.CheckpointCreate(ctx, container_id, checkPointOpts); err != nil {
+		return fmt.Errorf("error creating checkpoint for container %s: %w", container_id, err)
+	}
+
+	log.Println("checkpoint created for container: ", container_id)
+
+	return nil
+}
+
+func TransferCheckpointFiles(checkpoint_dir string, dest_ip string) error {
+	return nil
 }
 
 func StartMigratedContainer(container_id string, image_name string) error {
