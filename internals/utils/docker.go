@@ -244,22 +244,23 @@ func ExecCommand(command string) error {
 	return nil
 }
 
-func StartMigratedContainer(container_id string, image_name string) error {
+func StartMigratedContainerOnRemoteHost(remote_ip string, container_id string, image_name string) error {
 
 	ctx := context.Background()
-	cli, err := client.NewClientWithOpts(client.FromEnv)
+	remote_addr := fmt.Sprintf("tcp://%s:2375", remote_ip)
+	cli, err := client.NewClientWithOpts(client.WithHost(remote_addr))
 	if err != nil {
-		return fmt.Errorf("error creating docker client: %w", err)
+		return fmt.Errorf("error creating docker client for remote host: %w", err)
 	}
 	// check if image exists
 	_, err = cli.ImagePull(ctx, image_name, types.ImagePullOptions{})
 
 	if err != nil {
-		return fmt.Errorf("error pulling image %s: %w", image_name, err)
+		return fmt.Errorf("error pulling image %s on remote host: %w", image_name, err)
 	}
 
 	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{}); err != nil {
-		return fmt.Errorf("error starting the container: %w", err)
+		return fmt.Errorf("error starting the container on remote host: %w", err)
 	}
 	return nil
 }
