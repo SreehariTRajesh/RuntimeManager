@@ -130,7 +130,7 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	return res.ID, nil
 }
 
-func InvokeFunction(container_ip string, params map[string]interface{}) (map[string]interface{}, error) {
+func InvokeFunction(container_ip string, params map[string]any) (map[string]any, error) {
 	// functionality to execute container functions
 	return MakeHttpRequest(container_ip, 80, params)
 }
@@ -150,7 +150,7 @@ func AssignName() string {
 	return unique_id[:16]
 }
 
-func MakeHttpRequest(ip string, port int, params map[string]interface{}) (map[string]interface{}, error) {
+func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any, error) {
 	host := fmt.Sprintf("%s:%d", ip, port)
 	path := "/invoke"
 	scheme := "http"
@@ -185,7 +185,7 @@ func MakeHttpRequest(ip string, port int, params map[string]interface{}) (map[st
 		return nil, fmt.Errorf("error while reading response: %w", err)
 	}
 
-	var response map[string]interface{}
+	var response map[string]any
 	err = json.Unmarshal(body, &response)
 
 	if err != nil {

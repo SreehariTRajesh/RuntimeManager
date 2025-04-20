@@ -21,9 +21,13 @@ type MigrateFunctionResponse struct {
 }
 
 type InvokeFunctionRequest struct {
+	ContainerIP string         `json:"container_ip"`
+	Params      map[string]any `json:"params"`
 }
 
 type InvokeFunctionResponse struct {
+	Result map[string]any `json:"result"`
+	Error  string         `json:"error"`
 }
 
 type DeleteFunctionRequest struct {
