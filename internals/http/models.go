@@ -15,8 +15,8 @@ type CreateFunctionResponse struct {
 }
 
 type MigrateFunctionRequest struct {
-	SourceNode      string `json:"source_node"`
-	DestinationNode string `json:"destination_node"`
+	SourceIP      string `json:"source_ip"`
+	DestinationIP string `json:"destination_ip"`
 }
 
 type MigrateFunctionResponse struct {
