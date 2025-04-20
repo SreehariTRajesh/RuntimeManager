@@ -194,3 +194,27 @@ func MakeHttpRequest(ip string, port int, params map[string]interface{}) (map[st
 
 	return response, nil
 }
+
+func MigrateContainer(dest_ip string, check_point_dir string) {
+
+}
+
+func StartMigratedContainer(container_id string, image_name string) error {
+
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		return fmt.Errorf("error creating docker client: %w", err)
+	}
+	// check if image exists
+	_, err = cli.ImagePull(ctx, image_name, types.ImagePullOptions{})
+
+	if err != nil {
+		return fmt.Errorf("error pulling image %s: %w", image_name, err)
+	}
+
+	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{}); err != nil {
+		return fmt.Errorf("error starting the container: %w", err)
+	}
+	return nil
+}

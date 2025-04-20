@@ -8,4 +8,5 @@ const (
 	ORDER_0          = 0
 	ORDER_1          = 1
 	ORDER_2          = 2
+	CHECKPOINT       = "cp"
 )
