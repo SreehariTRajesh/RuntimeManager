@@ -1,8 +1,7 @@
-package macvlan
+package manager
 
 import (
 	"fmt"
-	"runtime-manager/configs"
 	"runtime-manager/internals/lifecycle"
 	"runtime-manager/internals/pkg"
 	"runtime-manager/internals/utils"
@@ -17,9 +16,8 @@ type MacVLANNetwork struct {
 	NetworkId string
 }
 
-var appConfig *configs.Config
-
 func (network *MacVLANNetwork) Initialize() error {
+	appConfig := utils.GetConfig()
 	network_name := appConfig.MacVLANNetworkConf.Name
 	network_gateway := appConfig.MacVLANNetworkConf.Gateway
 	network_parent := appConfig.MacVLANNetworkConf.Parent
@@ -45,7 +43,6 @@ func (network *MacVLANNetwork) Order() int {
 }
 
 func init() {
-	appConfig = configs.Parser(pkg.CONFIG_FILE_PATH)
 	macvlan_network := &MacVLANNetwork{}
 	lifecycle.RegisterInitializable(macvlan_network)
 	lifecycle.RegisterCleanable(macvlan_network)

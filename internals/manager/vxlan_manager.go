@@ -1,8 +1,7 @@
-package vxlan
+package manager
 
 import (
 	"log"
-	"runtime-manager/configs"
 	"runtime-manager/internals/lifecycle"
 	"runtime-manager/internals/pkg"
 	"runtime-manager/internals/utils"
@@ -17,9 +16,8 @@ type VXLanNetwork struct {
 	Devices []DeviceStatusEntry
 }
 
-var appConfig *configs.Config
-
 func (vxlan_net *VXLanNetwork) Initialize() error {
+	appConfig := utils.GetConfig()
 	err := utils.ConfigureBridge(appConfig.VXLanConf.Bridge)
 	if err != nil {
 		vxlan_net.Cleanup()
@@ -54,7 +52,6 @@ func (vxlan_net *VXLanNetwork) Order() int {
 }
 
 func init() {
-	appConfig = configs.Parser(pkg.CONFIG_FILE_PATH)
 	vxlan_network := &VXLanNetwork{}
 	lifecycle.RegisterInitializable(vxlan_network)
 	lifecycle.RegisterCleanable(vxlan_network)
