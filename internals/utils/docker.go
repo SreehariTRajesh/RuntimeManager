@@ -9,6 +9,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -196,7 +197,7 @@ func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any
 	return response, nil
 }
 
-func MigrateContainer(source_ip int, dest_ip int, container_id string) error {
+func MigrateContainer(source_ip string, dest_ip string, container_id string, checkpoint_dir string) error {
 	ctx := context.Background()
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
@@ -215,11 +216,31 @@ func MigrateContainer(source_ip int, dest_ip int, container_id string) error {
 	}
 
 	log.Println("checkpoint created for container: ", container_id)
+	err = TransferCheckpointFiles(checkpoint_dir, dest_ip)
+
+	if err != nil {
+		return fmt.Errorf("error transferring checkpoint files to destination node: %w", err)
+	}
+
+	log.Println("checkpoint files transferred to destination node:", dest_ip)
 
 	return nil
 }
 
 func TransferCheckpointFiles(checkpoint_dir string, dest_ip string) error {
+	cmd := fmt.Sprintf("scp -r %s %s:%s", checkpoint_dir, dest_ip, checkpoint_dir)
+	if err := ExecCommand(cmd); err != nil {
+		return fmt.Errorf("error transferring checkpoint files: %w", err)
+	}
+	return nil
+}
+
+func ExecCommand(command string) error {
+	out, err := exec.Command("bash", "-c", command).CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("command execution failed: %s, output: %s", err, string(out))
+	}
+	log.Println("command output:", string(out))
 	return nil
 }
 
