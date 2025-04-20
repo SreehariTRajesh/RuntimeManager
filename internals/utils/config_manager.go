@@ -8,14 +8,6 @@ import (
 )
 
 // following module initialiases the docker network
-type MacVLANNetwork struct {
-	Name      string
-	Subnet    string
-	Gateway   string
-	Parent    string
-	NetworkId string
-}
-
 var (
 	config_manager_instance *configs.Config
 	once                    sync.Once
