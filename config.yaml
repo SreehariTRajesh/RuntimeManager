@@ -1,0 +1,31 @@
+host-config:
+  host: 192.168.122.72
+  port: 1000
+
+vxlan-config:
+  bridge: br0
+  vxlan-peers:
+    - name: vxlan42
+      vxlan-id: 42
+      remote: 192.168.122.132
+      dst-port: 4789
+      device: enp1s0
+    - name: vxlan43
+      vxlan-id: 43
+      remote: 192.168.122.132
+      dst-port: 4789
+      device: enp1s0
+    - name: vxlan44
+      vxlan-id: 44
+      remote: 192.168.122.132
+      dst-port: 4789
+      device: enp1s0
+
+macvlan-network-config:
+  name: vxlan-network
+  subnet: 10.1.1.0/24
+  gateway: 10.1.1.1
+  parent: br0
+
+
+    
