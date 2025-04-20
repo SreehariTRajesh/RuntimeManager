@@ -1,9 +1,14 @@
 package http_runtime
 
 type CreateFunctionRequest struct {
+	FunctionName   string `json:"function_name"`
+	FunctionBundle string `json:"function_bundle"`
+	CPU            []int  `json:"cpu"`
+	Memory         int    `json:"memory"`
 }
 
 type CreateFunctionResponse struct {
+	
 }
 
 type MigrateFunctionRequest struct {
