@@ -112,10 +112,14 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 
 	container_config := &container.Config{
 		Image: image_name,
+		Cmd:   []string{"sh", "-c", "chmod +x /app/startup.sh && /app/startup.sh"},
 	}
 
 	host_config := &container.HostConfig{
 		Resources: resource_config,
+		Binds: []string{
+			fmt.Sprintf("%s:/app", function_bundle),
+		},
 	}
 
 	// create the container
