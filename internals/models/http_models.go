@@ -19,6 +19,8 @@ type CreateFunctionResponse struct {
 type MigrateFunctionRequest struct {
 	SourceIP      string `json:"source_ip"`
 	DestinationIP string `json:"destination_ip"`
+	ContainerId   string `json:"container_id"`
+	ImageName     string `json:"image_name"`
 }
 
 type MigrateFunctionResponse struct {
@@ -27,13 +29,14 @@ type MigrateFunctionResponse struct {
 }
 
 type InvokeFunctionRequest struct {
-	ContainerIP string         `json:"container_ip"`
-	Params      map[string]any `json:"params"`
+	FunctionName string         `json:"function_name"`
+	ContainerIP  string         `json:"container_ip"`
+	Params       map[string]any `json:"params"`
 }
 
 type InvokeFunctionResponse struct {
 	Result map[string]any `json:"result"`
-	Error  bool           `json:"error"`
+	Error  string         `json:"error"`
 }
 
 type DeleteFunctionRequest struct {
@@ -42,5 +45,5 @@ type DeleteFunctionRequest struct {
 
 type DeleteFunctionResponse struct {
 	Message string `json:"result"`
-	Error   bool   `json:"error"`
+	Error   string `json:"error"`
 }

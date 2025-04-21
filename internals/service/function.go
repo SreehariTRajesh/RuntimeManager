@@ -32,11 +32,39 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 }
 
 func InvokeFunction(request *models.InvokeFunctionRequest) (*models.InvokeFunctionResponse, error) {
-	return nil, nil
+	container_ip := request.ContainerIP
+	params := request.Params
+	function_name := request.FunctionName
+	response, err := utils.InvokeFunction(container_ip, params)
+	if err != nil {
+		return &models.InvokeFunctionResponse{
+			Result: nil,
+			Error:  fmt.Sprintf("error while invoking function: %s: %v", function_name, err),
+		}, fmt.Errorf("error while invoking function: %s", function_name)
+	}
+	return &models.InvokeFunctionResponse{
+		Result: response,
+		Error:  "",
+	}, nil
 }
 
 func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFunctionResponse, error) {
-	return nil, nil
+	container_id := request.ContainerId
+	src_ip := request.SourceIP
+	dst_ip := request.DestinationIP
+	image_name := request.ImageName
+	checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, container_id)
+	err := utils.MigrateContainer(src_ip, dst_ip, container_id, checkpoint_dir, image_name)
+	if err != nil {
+		return &models.MigrateFunctionResponse{
+			Message: fmt.Sprintf("error while migrating container %s, %v", container_id, err),
+			Error:   true,
+		}, fmt.Errorf("error while migrating container %s, %w", container_id, err)
+	}
+	return &models.MigrateFunctionResponse{
+		Message: "Migration successful",
+		Error:   false,
+	}, nil
 }
 
 func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionRequest, error) {
