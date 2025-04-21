@@ -3,8 +3,10 @@ package models
 type CreateFunctionRequest struct {
 	FunctionName   string `json:"function_name"`
 	FunctionBundle string `json:"function_bundle"`
+	ImageName      string `json:"image_name"`
 	CPU            []int  `json:"cpu"`
 	Memory         int    `json:"memory"`
+	VirtualIP      string `json:"virtual_+ip"`
 }
 
 type CreateFunctionResponse struct {

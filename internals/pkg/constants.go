@@ -10,4 +10,5 @@ const (
 	ORDER_2                = 2
 	CHECKPOINT             = "cp"
 	DEFAULT_CONTAINER_PORT = "80/tcp"
+	MACVLAN_NETWORK_NAME   = "vxlan-network"
 )
