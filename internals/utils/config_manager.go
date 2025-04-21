@@ -3,17 +3,18 @@ package utils
 import (
 	"log"
 	"runtime-manager/configs"
+	"runtime-manager/internals/models"
 	"runtime-manager/internals/pkg"
 	"sync"
 )
 
 // following module initialiases the docker network
 var (
-	config_manager_instance *configs.Config
+	config_manager_instance *models.Config
 	once                    sync.Once
 )
 
-func GetConfig() *configs.Config {
+func GetConfig() *models.Config {
 	once.Do(func() {
 		config_manager_instance = configs.Parser(pkg.CONFIG_FILE_PATH)
 		if config_manager_instance == nil {
