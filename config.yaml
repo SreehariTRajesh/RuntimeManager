@@ -29,6 +29,6 @@ macvlan-network-config:
 
 host-macvlan:
   name: macvlan0
-  parent-interface: enp1s0
+  parent-interface: br0
   ip-address: 10.1.1.80/24
 

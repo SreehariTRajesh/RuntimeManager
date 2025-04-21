@@ -6,7 +6,7 @@ type CreateFunctionRequest struct {
 	ImageName      string `json:"image_name"`
 	CPU            []int  `json:"cpu"`
 	Memory         int    `json:"memory"`
-	VirtualIP      string `json:"virtual_+ip"`
+	VirtualIP      string `json:"virtual_ip"`
 }
 
 type CreateFunctionResponse struct {
