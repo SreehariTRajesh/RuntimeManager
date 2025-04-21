@@ -92,7 +92,7 @@ func DestroyVXLan(vxlan_name string) error {
 	}
 
 	if err := netlink.LinkDel(link); err != nil {
-		return fmt.Errorf("failedt to delete link %s: %w", vxlan_name, err)
+		return fmt.Errorf("failed to delete link %s: %w", vxlan_name, err)
 	}
 
 	log.Printf("Successfully destroyed VXLAN link: %s", vxlan_name)
