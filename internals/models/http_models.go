@@ -1,4 +1,4 @@
-package http_runtime
+package models
 
 type CreateFunctionRequest struct {
 	FunctionName   string `json:"function_name"`

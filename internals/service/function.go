@@ -1,19 +1,19 @@
 package service
 
-import http_runtime "runtime-manager/internals/http"
+import "runtime-manager/internals/models"
 
-func CreateFunction(request *http_runtime.CreateFunctionRequest) (*http_runtime.CreateFunctionResponse, error) {
+func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFunctionResponse, error) {
 	return nil, nil
 }
 
-func InvokeFunction(request *http_runtime.InvokeFunctionRequest) (*http_runtime.InvokeFunctionResponse, error) {
+func InvokeFunction(request *models.InvokeFunctionRequest) (*models.InvokeFunctionResponse, error) {
 	return nil, nil
 }
 
-func MigrateFunctionRequest(request *http_runtime.InvokeFunctionRequest) (*http_runtime.MigrateFunctionResponse, error) {
+func MigrateFunctionRequest(request *models.InvokeFunctionRequest) (*models.MigrateFunctionResponse, error) {
 	return nil, nil
 }
 
-func DeleteFunctionRequest(request *http_runtime.DeleteFunctionRequest) (*http_runtime.DeleteFunctionRequest, error) {
+func DeleteFunctionRequest(request *models.DeleteFunctionRequest) (*models.DeleteFunctionRequest, error) {
 	return nil, nil
 }

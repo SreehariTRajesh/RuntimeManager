@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	http_runtime "runtime-manager/internals/http"
+	http_runtime "runtime-manager/internals/api"
 	"runtime-manager/internals/lifecycle"
 	_ "runtime-manager/internals/manager"
 )

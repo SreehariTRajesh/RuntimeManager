@@ -1,4 +1,4 @@
-package http_runtime
+package api
 
 import (
 	"github.com/gorilla/mux"

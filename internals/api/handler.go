@@ -1,8 +1,16 @@
-package http_runtime
+package api
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+	"runtime-manager/internals/models"
+)
 
 func CreateFunctionHandler(res http.ResponseWriter, req *http.Request) {
+	var create_function_request models.CreateFunctionRequest
+	if err := json.NewDecoder(req.Body).Decode(&create_function_request); err != nil {
+		http.Error(res, "invalid request body", http.StatusBadRequest)
+	}
 
 }
 
