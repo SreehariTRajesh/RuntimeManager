@@ -45,7 +45,7 @@ func CreateMacVLANNetwork(network_name string, subnet string, gateway string, pa
 		CheckDuplicate: true,
 		Driver:         "macvlan",
 		Options: map[string]string{
-			"com.docker.network.bridge.name": "br0", // Specify the bridge name
+			"parent": parent_device_name,
 		},
 		IPAM: ipam,
 	}
