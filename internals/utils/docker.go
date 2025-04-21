@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"os/exec"
+	"runtime-manager/internals/pkg"
 	"strconv"
 	"strings"
 
@@ -17,6 +18,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/network"
 	"github.com/docker/docker/client"
+	"github.com/docker/go-connections/nat"
 	"github.com/google/uuid"
 )
 
@@ -104,6 +106,10 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 		IPAddress: virtual_ip,
 	}
 
+	exposed_ports := nat.PortSet{
+		nat.Port(pkg.DEFAULT_CONTAINER_PORT): struct{}{},
+	}
+
 	networking_config := &network.NetworkingConfig{
 		EndpointsConfig: map[string]*network.EndpointSettings{
 			network_name: network_config,
@@ -111,8 +117,9 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	}
 
 	container_config := &container.Config{
-		Image: image_name,
-		Cmd:   []string{"sh", "-c", "chmod +x /app/startup.sh && /app/startup.sh"},
+		Image:        image_name,
+		Cmd:          []string{"sh", "-c", "chmod +x /app/startup.sh && /app/startup.sh"},
+		ExposedPorts: exposed_ports,
 	}
 
 	host_config := &container.HostConfig{
