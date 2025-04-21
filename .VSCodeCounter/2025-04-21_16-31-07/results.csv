@@ -1,0 +1,23 @@
+"filename", "language", "Go Module File", "Go Checksum File", "Go", "Shell Script", "YAML", "Markdown", "comment", "blank", "total"
+"/home/rajesh/RuntimeManager/build.sh", "Shell Script", 0, 0, 0, 1, 0, 0, 0, 0, 1
+"/home/rajesh/RuntimeManager/cmd/main.go", "Go", 0, 0, 9, 0, 0, 0, 0, 3, 12
+"/home/rajesh/RuntimeManager/config.yaml", "YAML", 0, 0, 0, 0, 26, 0, 0, 6, 32
+"/home/rajesh/RuntimeManager/configs/parser.go", "Go", 0, 0, 45, 0, 0, 0, 0, 11, 56
+"/home/rajesh/RuntimeManager/docs/README.md", "Markdown", 0, 0, 0, 0, 0, 6, 0, 2, 8
+"/home/rajesh/RuntimeManager/go.mod", "Go Module File", 34, 0, 0, 0, 0, 0, 0, 4, 38
+"/home/rajesh/RuntimeManager/go.sum", "Go Checksum File", 0, 140, 0, 0, 0, 0, 0, 1, 141
+"/home/rajesh/RuntimeManager/internals/http/handler.go", "Go", 0, 0, 1, 0, 0, 0, 0, 1, 2
+"/home/rajesh/RuntimeManager/internals/http/models.go", "Go", 0, 0, 36, 0, 0, 0, 0, 9, 45
+"/home/rajesh/RuntimeManager/internals/http/routes.go", "Go", 0, 0, 1, 0, 0, 0, 0, 1, 2
+"/home/rajesh/RuntimeManager/internals/lifecycle/cleanup.go", "Go", 0, 0, 26, 0, 0, 0, 0, 5, 31
+"/home/rajesh/RuntimeManager/internals/lifecycle/initialize.go", "Go", 0, 0, 20, 0, 0, 0, 0, 5, 25
+"/home/rajesh/RuntimeManager/internals/lifecycle/types.go", "Go", 0, 0, 9, 0, 0, 0, 0, 3, 12
+"/home/rajesh/RuntimeManager/internals/manager/macvlan_manager.go", "Go", 0, 0, 42, 0, 0, 0, 1, 7, 50
+"/home/rajesh/RuntimeManager/internals/manager/vxlan_manager.go", "Go", 0, 0, 50, 0, 0, 0, 0, 9, 59
+"/home/rajesh/RuntimeManager/internals/pkg/constants.go", "Go", 0, 0, 11, 0, 0, 0, 0, 2, 13
+"/home/rajesh/RuntimeManager/internals/service/function.go", "Go", 0, 0, 14, 0, 0, 0, 0, 6, 20
+"/home/rajesh/RuntimeManager/internals/utils/bridge.go", "Go", 0, 0, 29, 0, 0, 0, 0, 8, 37
+"/home/rajesh/RuntimeManager/internals/utils/config_manager.go", "Go", 0, 0, 20, 0, 0, 0, 1, 4, 25
+"/home/rajesh/RuntimeManager/internals/utils/docker.go", "Go", 0, 0, 203, 0, 0, 0, 18, 50, 271
+"/home/rajesh/RuntimeManager/internals/utils/vxlan.go", "Go", 0, 0, 74, 0, 0, 0, 4, 23, 101
+"Total", "-", 34, 140, 590, 1, 26, 6, 24, 160, 981
