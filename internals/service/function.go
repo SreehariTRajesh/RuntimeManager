@@ -10,10 +10,10 @@ func InvokeFunction(request *models.InvokeFunctionRequest) (*models.InvokeFuncti
 	return nil, nil
 }
 
-func MigrateFunctionRequest(request *models.InvokeFunctionRequest) (*models.MigrateFunctionResponse, error) {
+func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFunctionResponse, error) {
 	return nil, nil
 }
 
-func DeleteFunctionRequest(request *models.DeleteFunctionRequest) (*models.DeleteFunctionRequest, error) {
+func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionRequest, error) {
 	return nil, nil
 }
