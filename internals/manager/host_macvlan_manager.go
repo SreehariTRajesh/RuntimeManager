@@ -38,7 +38,7 @@ func (iface *HostMacVLANInterface) Order() int {
 }
 
 func init() {
-	macvlan_network := &MacVLANNetwork{}
-	lifecycle.RegisterInitializable(macvlan_network)
-	lifecycle.RegisterCleanable(macvlan_network)
+	macvlan_interface := &HostMacVLANInterface{}
+	lifecycle.RegisterInitializable(macvlan_interface)
+	lifecycle.RegisterCleanable(macvlan_interface)
 }
