@@ -27,7 +27,6 @@ macvlan-network-config:
   gateway: 10.1.1.1
   parent: br0
 
-
 host-macvlan:
   name: macvlan0
   parent-interface: enp1s0
