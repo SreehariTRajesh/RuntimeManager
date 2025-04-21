@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
-	http_runtime "runtime-manager/internals/api"
+	"runtime-manager/internals/api"
 	"runtime-manager/internals/lifecycle"
 	_ "runtime-manager/internals/manager"
 )
@@ -13,7 +13,7 @@ func main() {
 		lifecycle.InitializeAll()
 		lifecycle.WaitForShutDown()
 	}()
-	router := http_runtime.DefineMuxRouter()
+	router := api.DefineMuxRouter()
 	if err := http.ListenAndServe(":8080", router); err != nil {
 		log.Fatalf("error starting http server: %v", err)
 	}

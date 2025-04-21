@@ -36,7 +36,7 @@ func (iface *HostMacVLANInterface) Cleanup() {
 }
 
 func (iface *HostMacVLANInterface) Order() int {
-	return pkg.ORDER_2
+	return pkg.ORDER_1
 }
 
 func init() {

@@ -39,7 +39,7 @@ func (network *MacVLANNetwork) Cleanup() {
 }
 
 func (network *MacVLANNetwork) Order() int {
-	return pkg.ORDER_1
+	return pkg.ORDER_2
 }
 
 func init() {
