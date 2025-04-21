@@ -2,6 +2,7 @@ package manager
 
 import (
 	"fmt"
+	"log"
 	"runtime-manager/internals/lifecycle"
 	"runtime-manager/internals/pkg"
 	"runtime-manager/internals/utils"
@@ -31,6 +32,7 @@ func (iface *HostMacVLANInterface) Initialize() error {
 
 func (iface *HostMacVLANInterface) Cleanup() {
 	utils.DestroyMacVLANNetworkInterfaceByName(iface.Name)
+	log.Println("successfully destroyed network interface ", iface.Name)
 }
 
 func (iface *HostMacVLANInterface) Order() int {
