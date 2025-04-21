@@ -197,7 +197,7 @@ func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any
 	return response, nil
 }
 
-func MigrateContainer(source_ip string, dest_ip string, container_id string, checkpoint_dir string) error {
+func MigrateContainer(source_ip string, dest_ip string, container_id string, checkpoint_dir string, image_name string) error {
 	ctx := context.Background()
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
@@ -224,6 +224,10 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 
 	log.Println("checkpoint files transferred to destination node:", dest_ip)
 
+	err = StartMigratedContainerOnRemoteHost(dest_ip, container_id, image_name)
+	if err != nil {
+		return fmt.Errorf("error starting migrated container on remote host: %w", err)
+	}
 	return nil
 }
 
