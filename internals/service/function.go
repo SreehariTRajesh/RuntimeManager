@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"log"
 	"runtime-manager/internals/models"
 	"runtime-manager/internals/pkg"
 	"runtime-manager/internals/utils"
@@ -16,6 +17,7 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 	virtual_ip := request.VirtualIP
 	container_id, err := utils.CreateAndStartContainer(image_name, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, function_bundle_file_path)
 	if err != nil {
+		log.Println("error while creating container:", err)
 		return &models.CreateFunctionResponse{
 			FunctionName: "",
 			ContainerId:  "",

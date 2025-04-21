@@ -45,7 +45,7 @@ func DeleteFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	response, err := service.DeleteFunction(&delete_function_request)
 	if err != nil {
-		http.Error(res, "failed to invoke function", http.StatusInternalServerError)
+		http.Error(res, "failed to delete function", http.StatusInternalServerError)
 	}
 	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(http.StatusOK)
@@ -59,7 +59,7 @@ func MigrateFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	response, err := service.MigrateFunction(&migrate_function_request)
 	if err != nil {
-		http.Error(res, "failed to invoke function", http.StatusInternalServerError)
+		http.Error(res, "failed to migrate function", http.StatusInternalServerError)
 	}
 	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(http.StatusOK)
