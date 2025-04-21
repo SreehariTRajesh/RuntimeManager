@@ -30,7 +30,7 @@ func (iface *HostMacVLANInterface) Initialize() error {
 }
 
 func (iface *HostMacVLANInterface) Cleanup() {
-	utils.DestroyMacVLANNetwork(iface.Name)
+	utils.DestroyMacVLANNetworkInterfaceByName(iface.Name)
 }
 
 func (iface *HostMacVLANInterface) Order() int {
