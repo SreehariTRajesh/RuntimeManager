@@ -15,11 +15,6 @@ vxlan-config:
       remote: 192.168.122.132
       dst-port: 4789
       device: enp1s0
-    - name: vxlan44
-      vxlan-id: 44
-      remote: 192.168.122.132
-      dst-port: 4789
-      device: enp1s0
 
 macvlan-network-config:
   name: vxlan-network
