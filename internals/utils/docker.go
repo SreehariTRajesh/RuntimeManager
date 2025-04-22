@@ -136,7 +136,7 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	res, err := cli.ContainerCreate(ctx, container_config, host_config, networking_config, nil, "")
 
 	if err != nil {
-		return "", fmt.Errorf("error while creating container ")
+		return "", fmt.Errorf("error while creating container: %w", err)
 	}
 
 	//start the container
