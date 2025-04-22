@@ -119,12 +119,6 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 		},
 	}
 
-	container_config := &container.Config{
-		Image:        image_name,
-		Cmd:          []string{"sh", "-c", "chmod +x /app/startup.sh && /app/startup.sh"},
-		ExposedPorts: exposed_ports,
-	}
-
 	host_config := &container.HostConfig{
 		Resources: resource_config,
 		Binds: []string{
@@ -132,11 +126,26 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 		},
 	}
 
+	container_config := &container.Config{
+		Image:        image_name,
+		Cmd:          []string{"sh", "-c", "chmod +x /app/startup.sh && /app/startup.sh"},
+		ExposedPorts: exposed_ports,
+	}
+
 	// create the container
 	res, err := cli.ContainerCreate(ctx, container_config, host_config, networking_config, nil, "")
 
 	if err != nil {
 		return "", fmt.Errorf("error while creating container: %w", err)
+	}
+
+	endpoint_config := &network.EndpointSettings{
+		IPAddress: virtual_ip,
+	}
+
+	err = cli.NetworkConnect(ctx, network_name, res.ID, endpoint_config)
+	if err != nil {
+		log.Fatalf("Failed to connect to network: %v", err)
 	}
 
 	//start the container
