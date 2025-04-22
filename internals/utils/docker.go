@@ -72,7 +72,7 @@ func DestroyMacVLANNetwork(network_id string) error {
 	return nil
 }
 
-func CreateAndStartContainer(image_name string, cores []int, memory int, virtual_ip string, network_name string, function_bundle string) (string, error) {
+func CreateAndStartContainer(image_name string, cores []int, memory int, virtual_ip string, network_id string, function_bundle string) (string, error) {
 	// functionality to start a container
 	/*
 			@param: cpu_cores
@@ -115,7 +115,7 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 
 	networking_config := &network.NetworkingConfig{
 		EndpointsConfig: map[string]*network.EndpointSettings{
-			network_name: network_config,
+			network_id: network_config,
 		},
 	}
 
@@ -143,7 +143,7 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 		IPAddress: virtual_ip,
 	}
 
-	err = cli.NetworkConnect(ctx, network_name, res.ID, endpoint_config)
+	err = cli.NetworkConnect(ctx, network_id, res.ID, endpoint_config)
 	if err != nil {
 		log.Fatalf("Failed to connect to network: %v", err)
 	}

@@ -42,6 +42,10 @@ func (network *MacVLANNetwork) Order() int {
 	return pkg.ORDER_2
 }
 
+func (network *MacVLANNetwork) GetNetworkId() string {
+	return network.NetworkId
+}
+
 func init() {
 	macvlan_network := &MacVLANNetwork{}
 	lifecycle.RegisterInitializable(macvlan_network)
