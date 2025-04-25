@@ -14,3 +14,7 @@ const (
 	DEFAULT_CHECKPOINT_DIR = "/var/lib/docker/containers/%s/checkpoints/"
 	FILE_EXISTS            = "file exists"
 )
+
+/*
+# the following file contains constant definitions for the service
+*/

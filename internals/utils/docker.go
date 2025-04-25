@@ -106,7 +106,9 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	}
 
 	network_config := &network.EndpointSettings{
-		IPAddress: virtual_ip,
+		IPAMConfig: &network.EndpointIPAMConfig{
+			IPv4Address: virtual_ip,
+		},
 	}
 
 	exposed_ports := nat.PortSet{
@@ -137,14 +139,6 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 
 	if err != nil {
 		return "", fmt.Errorf("error while creating container: %w", err)
-	}
-
-	endpoint_config := &network.EndpointSettings{
-		IPAddress: virtual_ip,
-	}
-	err = cli.NetworkConnect(ctx, network_name, res.ID, endpoint_config)
-	if err != nil {
-		log.Fatalf("Failed to connect to network: %v", err)
 	}
 
 	//start the container
