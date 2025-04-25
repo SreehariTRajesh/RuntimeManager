@@ -66,6 +66,13 @@ func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFun
 	}, nil
 }
 
-func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionRequest, error) {
-	return nil, nil
+func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionResponse, error) {
+	container_ids := request.ContainerIds
+	//
+	for _, id := range container_ids {
+		utils.DeleteContainer(id)
+	}
+	return &models.DeleteFunctionResponse{
+		Result: fmt.Sprintf("successfully deleted containers: %v", container_ids),
+	}, nil
 }

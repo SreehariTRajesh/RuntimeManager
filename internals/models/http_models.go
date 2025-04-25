@@ -44,6 +44,5 @@ type DeleteFunctionRequest struct {
 }
 
 type DeleteFunctionResponse struct {
-	Message string `json:"result"`
-	Error   string `json:"error"`
+	Result string `json:"result"`
 }
