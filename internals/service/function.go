@@ -18,12 +18,7 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 	container_id, err := utils.CreateAndStartContainer(image_name, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, function_bundle_file_path)
 	if err != nil {
 		log.Println("error while creating container:", err)
-		return &models.CreateFunctionResponse{
-			FunctionName: "",
-			ContainerId:  "",
-			ContainerIP:  "",
-			Error:        fmt.Sprintf("error while creating container: %v", err),
-		}, fmt.Errorf("error while creating container: %w", err)
+		return nil, fmt.Errorf("error while creating container: %w", err)
 	}
 	return &models.CreateFunctionResponse{
 		FunctionName: function_name,
