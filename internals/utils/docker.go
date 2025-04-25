@@ -290,3 +290,20 @@ func StartMigratedContainerOnRemoteHost(remote_ip string, container_id string, i
 	}
 	return nil
 }
+
+func DeleteContainer(container_id string) error {
+	ctx := context.Background()
+	cli, err := client.NewClientWithOpts(client.FromEnv)
+	if err != nil {
+		return fmt.Errorf("error creating docker client: %w", err)
+	}
+	// delete container
+	if err := cli.ContainerStop(ctx, container_id, container.StopOptions{}); err != nil {
+		return fmt.Errorf("error stopping the container: %w", err)
+	}
+
+	if err := cli.ContainerRemove(ctx, container_id, container.RemoveOptions{}); err != nil {
+		return fmt.Errorf("error removing the container: %w", err)
+	}
+	return nil
+}

@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"runtime-manager/internals/models"
 	"runtime-manager/internals/service"
@@ -31,8 +32,10 @@ func InvokeFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	response, err := service.InvokeFunction(&invoke_function_request)
 	if err != nil {
-		http.Error(res, "failed to invoke function", http.StatusInternalServerError)
+		error_message := fmt.Sprintf("failed to invoke function: %v", err)
+		http.Error(res, error_message, http.StatusInternalServerError)
 	}
+	// response encoding for function invocation errors
 	res.Header().Set("Content-Type", "application/json")
 	res.WriteHeader(http.StatusOK)
 	json.NewEncoder(res).Encode(response)

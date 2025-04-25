@@ -39,10 +39,7 @@ func InvokeFunction(request *models.InvokeFunctionRequest) (*models.InvokeFuncti
 	function_name := request.FunctionName
 	response, err := utils.InvokeFunction(container_ip, params)
 	if err != nil {
-		return &models.InvokeFunctionResponse{
-			Result: nil,
-			Error:  fmt.Sprintf("error while invoking function: %s: %v", function_name, err),
-		}, fmt.Errorf("error while invoking function: %s", function_name)
+		return nil, fmt.Errorf("error while invoking function: %s: %w", function_name, err)
 	}
 	return &models.InvokeFunctionResponse{
 		Result: response,
