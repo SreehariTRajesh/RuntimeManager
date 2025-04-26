@@ -24,7 +24,6 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 		FunctionName: function_name,
 		ContainerId:  container_id,
 		ContainerIP:  virtual_ip,
-		Error:        "",
 	}, nil
 }
 

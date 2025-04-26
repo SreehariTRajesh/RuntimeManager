@@ -17,7 +17,7 @@ func CreateFunctionHandler(res http.ResponseWriter, req *http.Request) {
 
 	response, err := service.CreateFunction(&create_function_request)
 	if err != nil {
-		error_message := fmt.Sprintf("failed to create function: %v", err)
+		error_message := fmt.Sprintf("failed to create function: %s", err.Error())
 		http.Error(res, error_message, http.StatusInternalServerError)
 		return
 	}
@@ -34,7 +34,7 @@ func InvokeFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	response, err := service.InvokeFunction(&invoke_function_request)
 	if err != nil {
-		error_message := fmt.Sprintf("failed to invoke function: %v", err)
+		error_message := fmt.Sprintf("failed to invoke function: %s", err.Error())
 		http.Error(res, error_message, http.StatusInternalServerError)
 		return
 	}
