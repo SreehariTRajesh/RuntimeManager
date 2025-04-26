@@ -23,6 +23,16 @@ type MigrateFunctionRequest struct {
 	ImageName     string `json:"image_name"`
 }
 
+type UpdateFunctionRequest struct {
+	ContainerId string `json:"container_id"`
+	CorePool    []int  `json:"core_pool"`
+	Memory      int    `json:"memory"`
+}
+
+type UpdateFunctionResponse struct {
+	Message string `json:"message"`
+}
+
 type MigrateFunctionResponse struct {
 	Message string `json:"message"`
 	Error   bool   `json:"error"`

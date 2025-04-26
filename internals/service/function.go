@@ -71,3 +71,20 @@ func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFuncti
 		Result: fmt.Sprintf("successfully deleted containers: %v", container_ids),
 	}, nil
 }
+
+func UpdateResources(request *models.UpdateFunctionRequest) (*models.UpdateFunctionResponse, error) {
+	container_id := request.ContainerId
+	core_pool := request.CorePool
+	memory := request.Memory
+	err := utils.UpdateCorePool(core_pool, container_id)
+	if err != nil {
+		return nil, fmt.Errorf("error while updating corepool: %v", err)
+	}
+	err = utils.UpdateMemory(int64(memory), container_id)
+	if err != nil {
+		return nil, fmt.Errorf("error while updating memory: %v", err)
+	}
+	return &models.UpdateFunctionResponse{
+		Message: "resources updated sucessfully",
+	}, nil
+}

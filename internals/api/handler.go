@@ -75,3 +75,21 @@ func MigrateFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 	json.NewEncoder(res).Encode(response)
 }
+
+func UpdateFunctionHandler(res http.ResponseWriter, req *http.Request) {
+	var update_function_request models.UpdateFunctionRequest
+	if err := json.NewDecoder(req.Body).Decode(&update_function_request); err != nil {
+		http.Error(res, "invalid request body", http.StatusBadRequest)
+		return
+	}
+	response, err := service.UpdateResources(&update_function_request)
+
+	if err != nil {
+		error_message := fmt.Sprintf("error while updating resources: %v", err)
+		http.Error(res, error_message, http.StatusInternalServerError)
+		return
+	}
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusOK)
+	json.NewEncoder(res).Encode(response)
+}
