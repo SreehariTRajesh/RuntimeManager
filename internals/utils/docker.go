@@ -39,13 +39,6 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 	if err != nil {
 		return "", fmt.Errorf("error creating docker client: %w", err)
 	}
-
-	_, err = cli.ImagePull(ctx, image_name, types.ImagePullOptions{})
-
-	if err != nil {
-		return "", fmt.Errorf("error pulling image %s: %w", image_name, err)
-	}
-
 	// Get the network name from the network_manager
 	//network_name := macvlan.GetNetworkname()
 	cpuSet := getCoreSet(cores)
@@ -223,11 +216,6 @@ func StartMigratedContainerOnRemoteHost(remote_ip string, container_id string, i
 		return fmt.Errorf("error creating docker client for remote host: %w", err)
 	}
 	// check if image exists
-	_, err = cli.ImagePull(ctx, image_name, types.ImagePullOptions{})
-
-	if err != nil {
-		return fmt.Errorf("error pulling image %s on remote host: %w", image_name, err)
-	}
 
 	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{}); err != nil {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
