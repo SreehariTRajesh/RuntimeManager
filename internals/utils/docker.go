@@ -160,7 +160,7 @@ func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any
 	return response, nil
 }
 
-func MigrateContainer(source_ip string, dest_ip string, container_id string, checkpoint_dir string, image_name string) (string, error) {
+func MigrateContainer(source_ip string, dest_ip string, container_id string, image_name string) (string, error) {
 	ctx := context.Background()
 
 	cli, err := client.NewClientWithOpts(client.FromEnv)
@@ -169,6 +169,8 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 		return "", fmt.Errorf("error creating a docker client: %w", err)
 	}
 
+	checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_DIR, container_id)
+	config_dir := fmt.Sprintf(pkg.DEFAULT_DOCKER_DIR, container_id)
 	checkPointOpts := types.CheckpointCreateOptions{
 		CheckpointID: fmt.Sprintf("cp-%s", container_id),
 		Exit:         true,
@@ -181,6 +183,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 	log.Println("checkpoint created for container: ", container_id)
 	// checkpoint path
 	checkpoint_path := fmt.Sprintf("%s/%s", checkpoint_dir, fmt.Sprintf("cp-%s", container_id))
+	config_path := fmt.Sprintf("%s/config.v2.json", config_dir)
 	err = TransferCheckpointFiles(checkpoint_path, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
 
 	if err != nil {
@@ -189,14 +192,29 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 
 	log.Println("checkpoint files transferred to destination node:", dest_ip)
 
+	err = TransferConfigFiles(config_path, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
+	if err != nil {
+		return "", fmt.Errorf("error transferring config files to destination node: %w", err)
+	}
+
+	log.Println("config files transferred to destination node:", dest_ip)
 	return fmt.Sprintf("cp-%s", container_id), nil
 }
 
-func TransferCheckpointFiles(src_checkpoint_dir string, dst_checkpoint_dir, dest_ip string) error {
+func TransferCheckpointFiles(src_checkpoint_dir string, dst_checkpoint_dir string, dest_ip string) error {
 	cmd := fmt.Sprintf("scp -r %s rajesh@%s:%s", src_checkpoint_dir, dest_ip, dst_checkpoint_dir)
 	fmt.Println("Executing command:", cmd)
 	if err := ExecCommand(cmd); err != nil {
 		return fmt.Errorf("error transferring checkpoint files: %w", err)
+	}
+	return nil
+}
+
+func TransferConfigFiles(src_config_file string, dst_config_dir string, dest_ip string) error {
+	cmd := fmt.Sprintf("scp -r %s rajesh@%s:%s", src_config_file, dest_ip, dst_config_dir)
+	fmt.Println("Executing command:", cmd)
+	if err := ExecCommand(cmd); err != nil {
+		return fmt.Errorf("error transferring config files: %w", err)
 	}
 	return nil
 }
@@ -273,8 +291,29 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 		return fmt.Errorf("error creating docker client for remote host: %w", err)
 	}
 	// check if image exists
+	container_config, err := GetContainerConfigs(container_id)
 
-	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{}); err != nil {
+	if err != nil {
+		return fmt.Errorf("error while getting container configs")
+	}
+	config := container_config.Config
+	host_config := container_config.HostConfig
+	networking_config := &network.NetworkingConfig{
+		EndpointsConfig: container_config.NetworkSettings.Networks,
+	}
+
+	_, err = cli.ContainerCreate(ctx, config, host_config, networking_config, nil, container_id)
+
+	if err != nil {
+		return fmt.Errorf("error while creating container from configs: %w", err)
+	}
+
+	log.Printf("container %s created successfully", container_id)
+
+	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{
+		CheckpointID:  checkpoint_name,
+		CheckpointDir: checkpoint_path,
+	}); err != nil {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
 	}
 	return nil
@@ -295,4 +334,18 @@ func DeleteContainer(container_id string) error {
 		return fmt.Errorf("error removing the container: %w", err)
 	}
 	return nil
+}
+
+func GetContainerConfigs(container_id string) (*types.ContainerJSON, error) {
+	file_path := fmt.Sprintf("%s:%s.json", pkg.DEFAULT_CONFIG_DIR, container_id)
+	config_data, err := os.ReadFile(file_path)
+	if err != nil {
+		return nil, fmt.Errorf("error reading config data from file: %w", err)
+	}
+	var container_config types.ContainerJSON
+	err = json.Unmarshal(config_data, &container_config)
+	if err != nil {
+		return nil, fmt.Errorf("error unmarshalling data to types.ContainerJSON: %w", err)
+	}
+	return &container_config, nil
 }
