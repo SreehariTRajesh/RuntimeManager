@@ -191,7 +191,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 }
 
 func TransferCheckpointFiles(checkpoint_dir string, dest_ip string) error {
-	cmd := fmt.Sprintf("scp -r %s %s:%s", checkpoint_dir, dest_ip, checkpoint_dir)
+	cmd := fmt.Sprintf("scp -r %s rajesh@%s:%s", checkpoint_dir, dest_ip, checkpoint_dir)
 	if err := ExecCommand(cmd); err != nil {
 		return fmt.Errorf("error transferring checkpoint files: %w", err)
 	}
