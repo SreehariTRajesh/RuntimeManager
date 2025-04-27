@@ -52,7 +52,8 @@ func DeleteFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	response, err := service.DeleteFunction(&delete_function_request)
 	if err != nil {
-		http.Error(res, "failed to delete function", http.StatusInternalServerError)
+		error_message := fmt.Sprintf("failed to delete function: %s", err.Error())
+		http.Error(res, error_message, http.StatusInternalServerError)
 		return
 	}
 	res.Header().Set("Content-Type", "application/json")
@@ -68,7 +69,8 @@ func MigrateFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	}
 	response, err := service.MigrateFunction(&migrate_function_request)
 	if err != nil {
-		http.Error(res, "failed to migrate function", http.StatusInternalServerError)
+		error_message := fmt.Sprintf("failed to migrate function: %s", err.Error())
+		http.Error(res, error_message, http.StatusInternalServerError)
 		return
 	}
 	res.Header().Set("Content-Type", "application/json")
@@ -85,7 +87,7 @@ func UpdateFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	response, err := service.UpdateResources(&update_function_request)
 
 	if err != nil {
-		error_message := fmt.Sprintf("error while updating resources: %v", err)
+		error_message := fmt.Sprintf("error while updating resources: %s", err.Error())
 		http.Error(res, error_message, http.StatusInternalServerError)
 		return
 	}
