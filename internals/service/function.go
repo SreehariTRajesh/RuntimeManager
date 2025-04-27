@@ -16,7 +16,8 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 	cpu := request.CPU
 	memory := request.Memory
 	virtual_ip := request.VirtualIP
-	container_id, err := utils.CreateAndStartContainer(image_name, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, function_bundle_file_path)
+	mac_address := request.MacAddress
+	container_id, err := utils.CreateAndStartContainer(image_name, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, mac_address, function_bundle_file_path)
 	if err != nil {
 		log.Println("error while creating container:", err)
 		return nil, fmt.Errorf("error while creating container: %w", err)

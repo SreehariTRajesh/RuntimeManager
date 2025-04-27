@@ -7,6 +7,7 @@ type CreateFunctionRequest struct {
 	CPU            []int  `json:"cpu"`
 	Memory         int    `json:"memory"`
 	VirtualIP      string `json:"virtual_ip"`
+	MacAddress     string `json:"mac_address"`
 }
 
 type CreateFunctionResponse struct {

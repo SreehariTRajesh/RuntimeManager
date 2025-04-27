@@ -26,7 +26,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func CreateAndStartContainer(image_name string, cores []int, memory int, virtual_ip string, network_name string, function_bundle string) (string, error) {
+func CreateAndStartContainer(image_name string, cores []int, memory int, virtual_ip string, network_name string, static_mac string, function_bundle string) (string, error) {
 	// functionality to start a container
 	/*
 			@param: cpu_cores
@@ -56,6 +56,7 @@ func CreateAndStartContainer(image_name string, cores []int, memory int, virtual
 		IPAMConfig: &network.EndpointIPAMConfig{
 			IPv4Address: virtual_ip,
 		},
+		MacAddress: static_mac,
 	}
 
 	exposed_ports := nat.PortSet{
