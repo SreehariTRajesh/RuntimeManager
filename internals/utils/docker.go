@@ -179,7 +179,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 	}
 
 	log.Println("checkpoint created for container: ", container_id)
-	err = TransferCheckpointFiles(checkpoint_dir, dest_ip, pkg.DEFAULT_CHECKPOINT_DIR_PARENT)
+	err = TransferCheckpointFiles(checkpoint_dir, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
 
 	if err != nil {
 		return "", fmt.Errorf("error transferring checkpoint files to destination node: %w", err)
