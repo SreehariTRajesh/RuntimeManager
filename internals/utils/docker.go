@@ -375,5 +375,6 @@ func GetContainerConfigs(container_id string) (*types.ContainerJSON, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error unmarshalling data to types.ContainerJSON: %w", err)
 	}
+	fmt.Println(container_config)
 	return &container_config, nil
 }
