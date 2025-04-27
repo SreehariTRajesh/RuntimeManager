@@ -11,6 +11,8 @@ type ContainerStatusRegistry struct {
 	ContainerIds []string
 }
 
+var ContainerRegistry *ContainerStatusRegistry
+
 func (registry *ContainerStatusRegistry) Add(container_id string) {
 	registry.ContainerIds = append(registry.ContainerIds, container_id)
 }
@@ -26,6 +28,6 @@ func (registry *ContainerStatusRegistry) Order() int {
 }
 
 func init() {
-	container_registry := &ContainerStatusRegistry{}
-	lifecycle.RegisterCleanable(container_registry)
+	ContainerRegistry = &ContainerStatusRegistry{}
+	lifecycle.RegisterCleanable(ContainerRegistry)
 }

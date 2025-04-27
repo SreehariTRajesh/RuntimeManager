@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"log"
+	"runtime-manager/internals/manager"
 	"runtime-manager/internals/models"
 	"runtime-manager/internals/pkg"
 	"runtime-manager/internals/utils"
@@ -20,6 +21,8 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 		log.Println("error while creating container:", err)
 		return nil, fmt.Errorf("error while creating container: %w", err)
 	}
+	// add the Container Id to the Container Registry
+	manager.ContainerRegistry.Add(container_id)
 	return &models.CreateFunctionResponse{
 		FunctionName: function_name,
 		ContainerId:  container_id,
