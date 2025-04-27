@@ -337,7 +337,7 @@ func DeleteContainer(container_id string) error {
 }
 
 func GetContainerConfigs(container_id string) (*types.ContainerJSON, error) {
-	file_path := fmt.Sprintf("%s/%s.json", pkg.DEFAULT_CONFIG_DIR, container_id)
+	file_path := fmt.Sprintf("%s/config.v2.json", pkg.DEFAULT_CHECKPOINT_DIR_PARENT)
 	config_data, err := os.ReadFile(file_path)
 	if err != nil {
 		return nil, fmt.Errorf("error reading config data from file: %w", err)
