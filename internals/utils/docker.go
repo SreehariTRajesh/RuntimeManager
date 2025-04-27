@@ -220,6 +220,7 @@ func CopyCheckpointToDockerDir(container_id string, checkpoint_dir string, check
 }
 
 func CopyDirectory(src_dir string, dst_dir string) error {
+	log.Println("copying from %s to %s", src_dir, dst_dir)
 	return filepath.WalkDir(src_dir, func(path string, dir fs.DirEntry, err error) error {
 		if err != nil {
 			return fmt.Errorf("error traversing path %s: %w", src_dir, err)
