@@ -298,9 +298,8 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	}
 	config := container_config.Config
 	host_config := container_config.HostConfig
-	networking_config := &network.NetworkingConfig{
-		EndpointsConfig: container_config.NetworkSettings.Networks,
-	}
+	// change the network id to macvlan network id of the current host
+	networking_config := GetNetworkConfigsForMigratedContainer("vxlan-network", container_config.NetworkSettings.Networks)
 
 	_, err = cli.ContainerCreate(ctx, config, host_config, networking_config, nil, container_id)
 
@@ -316,6 +315,24 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
 	}
 	return nil
+}
+
+func GetNetworkConfigsForMigratedContainer(network_name string, settings map[string]*network.EndpointSettings) *network.NetworkingConfig {
+	virtual_ip := settings[network_name].IPAMConfig.IPv4Address
+
+	network_config := &network.EndpointSettings{
+		IPAMConfig: &network.EndpointIPAMConfig{
+			IPv4Address: virtual_ip,
+		},
+	}
+
+	networking_config := &network.NetworkingConfig{
+		EndpointsConfig: map[string]*network.EndpointSettings{
+			network_name: network_config,
+		},
+	}
+
+	return networking_config
 }
 
 func DeleteContainer(container_id string) error {
