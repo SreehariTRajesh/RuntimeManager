@@ -329,11 +329,12 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 
 func GetNetworkConfigsForMigratedContainer(network_name string, settings map[string]*network.EndpointSettings) *network.NetworkingConfig {
 	virtual_ip := settings[network_name].IPAMConfig.IPv4Address
-
+	mac_address := settings[network_name].MacAddress
 	network_config := &network.EndpointSettings{
 		IPAMConfig: &network.EndpointIPAMConfig{
 			IPv4Address: virtual_ip,
 		},
+		MacAddress: mac_address,
 	}
 
 	networking_config := &network.NetworkingConfig{
