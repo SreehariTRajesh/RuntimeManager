@@ -198,6 +198,12 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 	}
 
 	log.Println("config files transferred to destination node:", dest_ip)
+
+	// remove container;
+	if err := cli.ContainerRemove(ctx, container_id, container.RemoveOptions{}); err != nil {
+		return "", fmt.Errorf("error removing the container: %w", err)
+	}
+
 	return fmt.Sprintf("cp-%s", container_id), nil
 }
 
