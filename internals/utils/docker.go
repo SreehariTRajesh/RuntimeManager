@@ -177,9 +177,11 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 	if err := cli.CheckpointCreate(ctx, container_id, checkPointOpts); err != nil {
 		return "", fmt.Errorf("error creating checkpoint for container %s: %w", container_id, err)
 	}
-
+	//
 	log.Println("checkpoint created for container: ", container_id)
-	err = TransferCheckpointFiles(checkpoint_dir, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
+	// checkpoint path
+	checkpoint_path := fmt.Sprintf("%s/%s", checkpoint_dir, fmt.Sprintf("cp-%s", container_id))
+	err = TransferCheckpointFiles(checkpoint_path, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
 
 	if err != nil {
 		return "", fmt.Errorf("error transferring checkpoint files to destination node: %w", err)
