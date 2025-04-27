@@ -5,11 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"io/fs"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime-manager/internals/pkg"
 	"strconv"
 	"strings"
@@ -183,7 +187,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 
 	log.Println("checkpoint files transferred to destination node:", dest_ip)
 
-	err = StartMigratedContainerOnRemoteHost(dest_ip, container_id, image_name)
+	err = StartMigratedContainer(dest_ip, container_id)
 	if err != nil {
 		return fmt.Errorf("error starting migrated container on remote host: %w", err)
 	}
@@ -191,7 +195,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, che
 }
 
 func TransferCheckpointFiles(checkpoint_dir string, dest_ip string) error {
-	cmd := fmt.Sprintf("scp -r %s rajesh@%s:%s", checkpoint_dir, dest_ip, checkpoint_dir)
+	cmd := fmt.Sprintf("scp -r %s %s:%s", checkpoint_dir, dest_ip, checkpoint_dir)
 	if err := ExecCommand(cmd); err != nil {
 		return fmt.Errorf("error transferring checkpoint files: %w", err)
 	}
@@ -207,11 +211,57 @@ func ExecCommand(command string) error {
 	return nil
 }
 
-func StartMigratedContainerOnRemoteHost(remote_ip string, container_id string, image_name string) error {
+func CopyCheckpointToDockerDir(dest_ip string, container_id string, checkpoint_dir string) error {
+	err := os.Mkdir(checkpoint_dir, 0755)
+	if err != nil {
+		return fmt.Errorf("error copying checkpoint files to docker direectory")
+	}
+	return nil
+}
 
+func CopyDirectory(src_dir string, dst_dir string) error {
+	return filepath.WalkDir(src_dir, func(path string, dir fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		rel_path, err := filepath.Rel(src_dir, path)
+		if err != nil {
+			return fmt.Errorf("error while extracting relative path: %w", err)
+		}
+		dst_path := filepath.Join(dst_dir, rel_path)
+
+		if dir.IsDir() {
+			return os.MkdirAll(dst_path, 0755)
+		} else {
+			return CopyFile(path, dst_path)
+		}
+	})
+}
+
+func CopyFile(src_file string, dst_file string) error {
+	src, err := os.Open(src_file)
+	if err != nil {
+		return fmt.Errorf("error while opening file: %w", err)
+	}
+	defer src.Close()
+
+	dst, err := os.Create(dst_file)
+	if err != nil {
+		return fmt.Errorf("error while creating the file: %w", err)
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return fmt.Errorf("error while copying file from src to dst: %w", err)
+	}
+	return dst.Sync()
+}
+
+func StartMigratedContainer(container_id string, image_name string) error {
+	// transfer check point files from
 	ctx := context.Background()
-	remote_addr := fmt.Sprintf("tcp://%s:2375", remote_ip)
-	cli, err := client.NewClientWithOpts(client.WithHost(remote_addr))
+	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return fmt.Errorf("error creating docker client for remote host: %w", err)
 	}
