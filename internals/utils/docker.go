@@ -279,12 +279,6 @@ func CopyFile(src_file string, dst_file string) error {
 
 func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	checkpoint_path := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, checkpoint_name)
-	err := CopyCheckpointToDockerDir(container_id, checkpoint_path, checkpoint_name)
-	if err != nil {
-		return fmt.Errorf("error copying checkpoint to docker directory: %w", err)
-	}
-	// once checkpoint is copied, start the container from the host machine hosting t
-	// transfer check point files from
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
@@ -302,14 +296,23 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	networking_config := GetNetworkConfigsForMigratedContainer("vxlan-network", container_config.NetworkSettings.Networks)
 
 	res, err := cli.ContainerCreate(ctx, config, host_config, networking_config, nil, container_id)
-	fmt.Println("container with id: %s", res.ID)
+
 	if err != nil {
 		return fmt.Errorf("error while creating container from configs: %w", err)
 	}
 
-	log.Printf("container %s created successfully", container_id)
+	fmt.Printf("container with id: %s\n", res.ID)
 
-	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{
+	err = CopyCheckpointToDockerDir(res.ID, checkpoint_path, checkpoint_name)
+	if err != nil {
+		return fmt.Errorf("error copying checkpoint to docker directory: %w", err)
+	}
+	// once checkpoint is copied, start the container from the host machine hosting t
+	// transfer check point files from
+
+	log.Printf("container %s created successfully", res.ID)
+
+	if err := cli.ContainerStart(ctx, res.ID, container.StartOptions{
 		CheckpointID: checkpoint_name,
 	}); err != nil {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
