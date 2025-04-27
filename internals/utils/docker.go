@@ -211,10 +211,11 @@ func ExecCommand(command string) error {
 	return nil
 }
 
-func CopyCheckpointToDockerDir(dest_ip string, container_id string, checkpoint_dir string) error {
-	err := os.Mkdir(checkpoint_dir, 0755)
+func CopyCheckpointToDockerDir(container_id string, checkpoint_dir string) error {
+	checkpoint_dst := fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_DIR, container_id)
+	err := CopyDirectory(checkpoint_dir, checkpoint_dst)
 	if err != nil {
-		return fmt.Errorf("error copying checkpoint files to docker direectory")
+		return fmt.Errorf("error copying checkpoint directory: %w", err)
 	}
 	return nil
 }
@@ -259,6 +260,11 @@ func CopyFile(src_file string, dst_file string) error {
 }
 
 func StartMigratedContainer(container_id string, image_name string) error {
+	err := CopyCheckpointToDockerDir(container_id, pkg.DEFAULT_CHECKPOINT_DIR)
+	if err != nil {
+		return fmt.Errorf("error copying checkpoint to docker directory: %w", err)
+	}
+	// once checkpoint is copied, start the container from the host machine hosting t
 	// transfer check point files from
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv)

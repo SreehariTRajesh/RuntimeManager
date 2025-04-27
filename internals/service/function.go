@@ -49,8 +49,7 @@ func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFun
 	src_ip := request.SourceIP
 	dst_ip := request.DestinationIP
 	image_name := request.ImageName
-	checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, container_id)
-	err := utils.MigrateContainer(src_ip, dst_ip, container_id, checkpoint_dir, image_name)
+	err := utils.MigrateContainer(src_ip, dst_ip, container_id, pkg.DEFAULT_CHECKPOINT_DIR, image_name)
 	if err != nil {
 		return nil, fmt.Errorf("error while migrating container %s, %w", container_id, err)
 	}
