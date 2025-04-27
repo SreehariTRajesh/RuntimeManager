@@ -207,8 +207,8 @@ func ExecCommand(command string) error {
 	return nil
 }
 
-func CopyCheckpointToDockerDir(container_id string, checkpoint_dir string) error {
-	checkpoint_dst := fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_DIR, container_id)
+func CopyCheckpointToDockerDir(container_id string, checkpoint_dir string, checkpoint_name string) error {
+	checkpoint_dst := fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_PATH, container_id, checkpoint_name)
 	err := CopyDirectory(checkpoint_dir, checkpoint_dst)
 	if err != nil {
 		return fmt.Errorf("error copying checkpoint directory: %w", err)
@@ -257,7 +257,7 @@ func CopyFile(src_file string, dst_file string) error {
 
 func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	checkpoint_path := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, checkpoint_name)
-	err := CopyCheckpointToDockerDir(container_id, checkpoint_path)
+	err := CopyCheckpointToDockerDir(container_id, checkpoint_path, checkpoint_name)
 	if err != nil {
 		return fmt.Errorf("error copying checkpoint to docker directory: %w", err)
 	}
