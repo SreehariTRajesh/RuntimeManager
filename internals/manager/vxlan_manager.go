@@ -48,7 +48,7 @@ func (vxlan_net *VXLanNetwork) Cleanup() {
 }
 
 func (vxlan_net *VXLanNetwork) Order() int {
-	return pkg.ORDER_0
+	return pkg.ORDER_1
 }
 
 func init() {
