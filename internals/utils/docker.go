@@ -301,8 +301,8 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	// change the network id to macvlan network id of the current host
 	networking_config := GetNetworkConfigsForMigratedContainer("vxlan-network", container_config.NetworkSettings.Networks)
 
-	_, err = cli.ContainerCreate(ctx, config, host_config, networking_config, nil, container_id)
-
+	res, err := cli.ContainerCreate(ctx, config, host_config, networking_config, nil, container_id)
+	fmt.Println("container with id: %s", res.ID)
 	if err != nil {
 		return fmt.Errorf("error while creating container from configs: %w", err)
 	}
