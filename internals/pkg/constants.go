@@ -13,9 +13,9 @@ const (
 	DEFAULT_CONTAINER_PORT         = "80/tcp"
 	MACVLAN_NETWORK_NAME           = "vxlan-network"
 	DEFAULT_DOCKER_CHECKPOINT_DIR  = "/var/lib/docker/containers/%s/checkpoints"
-	DEFAULT_CHECKPOINT_DIR_PARENT  = "checkpoint/"
+	DEFAULT_CHECKPOINT_DIR_PARENT  = "/home/rajesh/RuntimeManager/checkpoint/"
 	DEFAULT_DOCKER_CHECKPOINT_PATH = "/var/lib/docker/containers/%s/checkpoints/%s"
-	DEFAULT_CHECKPOINT_DIR         = "checkpoint/%s"
+	DEFAULT_CHECKPOINT_DIR         = "/home/rajesh/RuntimeManager/checkpoint/%s"
 	FILE_EXISTS                    = "file exists"
 )
 
