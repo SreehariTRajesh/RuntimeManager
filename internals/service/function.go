@@ -49,16 +49,27 @@ func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFun
 	src_ip := request.SourceIP
 	dst_ip := request.DestinationIP
 	image_name := request.ImageName
-	err := utils.MigrateContainer(src_ip, dst_ip, container_id, pkg.DEFAULT_CHECKPOINT_DIR, image_name)
+	cp, err := utils.MigrateContainer(src_ip, dst_ip, container_id, fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_DIR, container_id), image_name)
 	if err != nil {
 		return nil, fmt.Errorf("error while migrating container %s, %w", container_id, err)
 	}
 	return &models.MigrateFunctionResponse{
-		Message: "Migration successful",
-		Error:   false,
+		Message:        "migration successful",
+		CheckPointName: cp,
 	}, nil
 }
 
+func StartMigratedFunction(request *models.StartMigratedFunctionRequest) (*models.StartMigratedFunctionResponse, error) {
+	container_id := request.ContainerId
+	check_point := request.CheckPointName
+	err := utils.StartMigratedContainer(container_id, check_point)
+	if err != nil {
+		return nil, fmt.Errorf("error starting the migrated function: %w", err)
+	}
+	return &models.StartMigratedFunctionResponse{
+		Message: "migrated function started successfully",
+	}, nil
+}
 func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionResponse, error) {
 	container_ids := request.ContainerIds
 	//

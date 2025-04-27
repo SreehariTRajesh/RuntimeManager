@@ -22,6 +22,15 @@ type MigrateFunctionRequest struct {
 	ImageName     string `json:"image_name"`
 }
 
+type StartMigratedFunctionRequest struct {
+	ContainerId    string `json:"container_id"`
+	CheckPointName string `json:"checkpoint_name"`
+}
+
+type StartMigratedFunctionResponse struct {
+	Message string `json:"message"`
+}
+
 type UpdateFunctionRequest struct {
 	ContainerId string `json:"container_id"`
 	CorePool    []int  `json:"core_pool"`
@@ -33,8 +42,8 @@ type UpdateFunctionResponse struct {
 }
 
 type MigrateFunctionResponse struct {
-	Message string `json:"message"`
-	Error   bool   `json:"error"`
+	Message        string `json:"message"`
+	CheckPointName string `json:"checkpoint_name"`
 }
 
 type InvokeFunctionRequest struct {

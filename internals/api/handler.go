@@ -95,3 +95,20 @@ func UpdateFunctionHandler(res http.ResponseWriter, req *http.Request) {
 	res.WriteHeader(http.StatusOK)
 	json.NewEncoder(res).Encode(response)
 }
+
+func StartMigratedFunctionAtHostNode(res http.ResponseWriter, req *http.Request) {
+	var start_migrated_function_request models.StartMigratedFunctionRequest
+	if err := json.NewDecoder(req.Body).Decode(&start_migrated_function_request); err != nil {
+		http.Error(res, "invalid request body", http.StatusBadRequest)
+		return
+	}
+	response, err := service.StartMigratedFunction(&start_migrated_function_request)
+	if err != nil {
+		error_message := fmt.Sprintf("error while starting migrated function: %s", err.Error())
+		http.Error(res, error_message, http.StatusInternalServerError)
+		return
+	}
+	res.Header().Set("Content-Type", "application/json")
+	res.WriteHeader(http.StatusOK)
+	json.NewEncoder(res).Encode(response)
+}
