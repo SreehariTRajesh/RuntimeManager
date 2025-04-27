@@ -11,5 +11,6 @@ func DefineMuxRouter() *mux.Router {
 	router.HandleFunc("/delete", DeleteFunctionHandler).Methods("DELETE")
 	router.HandleFunc("/migrate", MigrateFunctionHandler).Methods("POST")
 	router.HandleFunc("/update", UpdateFunctionHandler).Methods("PUT")
+	router.HandleFunc("/start-migrated", StartMigratedFunctionAtHostNode).Methods("POST")
 	return router
 }
