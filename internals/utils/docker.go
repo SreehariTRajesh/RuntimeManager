@@ -284,7 +284,7 @@ func CopyFile(src_file string, dst_file string) error {
 	return dst.Sync()
 }
 
-func StartMigratedContainer(container_id string, checkpoint_name string) error {
+func StartMigratedContainer(container_id string, checkpoint_name string, mac_address string) error {
 	checkpoint_path := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, checkpoint_name)
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv)
@@ -300,7 +300,7 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	config := container_config.Config
 	host_config := container_config.HostConfig
 	// change the network id to macvlan network id of the current host
-	networking_config := GetNetworkConfigsForMigratedContainer("vxlan-network", container_config.NetworkSettings.Networks)
+	networking_config := GetNetworkConfigsForMigratedContainer("vxlan-network", container_config.NetworkSettings.Networks, mac_address)
 
 	res, err := cli.ContainerCreate(ctx, config, host_config, networking_config, nil, "")
 
@@ -327,9 +327,8 @@ func StartMigratedContainer(container_id string, checkpoint_name string) error {
 	return nil
 }
 
-func GetNetworkConfigsForMigratedContainer(network_name string, settings map[string]*network.EndpointSettings) *network.NetworkingConfig {
+func GetNetworkConfigsForMigratedContainer(network_name string, settings map[string]*network.EndpointSettings, mac_address string) *network.NetworkingConfig {
 	virtual_ip := settings[network_name].IPAMConfig.IPv4Address
-	mac_address := settings[network_name].MacAddress
 	fmt.Println("MAC ADDRESS:", mac_address)
 	network_config := &network.EndpointSettings{
 		IPAMConfig: &network.EndpointIPAMConfig{

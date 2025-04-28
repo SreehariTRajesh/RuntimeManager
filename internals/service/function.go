@@ -63,7 +63,8 @@ func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFun
 func StartMigratedFunction(request *models.StartMigratedFunctionRequest) (*models.StartMigratedFunctionResponse, error) {
 	container_id := request.ContainerId
 	check_point := request.CheckPointName
-	err := utils.StartMigratedContainer(container_id, check_point)
+	mac_address := request.MacAddress
+	err := utils.StartMigratedContainer(container_id, check_point, mac_address)
 	if err != nil {
 		return nil, fmt.Errorf("error starting the migrated function: %w", err)
 	}
