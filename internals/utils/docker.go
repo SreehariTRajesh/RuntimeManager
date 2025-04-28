@@ -183,7 +183,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 	log.Println("checkpoint created for container: ", container_id)
 	// checkpoint path
 
-	src_checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, container_id)
+	src_checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_PATH, container_id, fmt.Sprintf("cp-%s", container_id))
 
 	checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, fmt.Sprintf("cp-%s", container_id))
 	err = TransferCheckpointFiles(src_checkpoint_dir, checkpoint_dir, dest_ip)
