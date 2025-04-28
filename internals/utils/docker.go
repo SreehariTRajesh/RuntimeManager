@@ -245,7 +245,7 @@ func CopyCheckpointToDockerDir(container_id string, checkpoint_dir string, check
 }
 
 func CopyContainerFilesToDockerDir(container_id string) error {
-	container_dir := pkg.DEFAULT_DOCKER_CHECKPOINT_DIR
+	container_dir := pkg.DEFAULT_DOCKER_CONTAINER_PARENT
 	err := CopyDirectory(container_dir, fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, container_id))
 	if err != nil {
 		return fmt.Errorf("error copying the container files to docker directory: %w", err)
