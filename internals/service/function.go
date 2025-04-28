@@ -61,9 +61,14 @@ func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFun
 }
 
 func StartMigratedFunction(request *models.StartMigratedFunctionRequest) (*models.StartMigratedFunctionResponse, error) {
-	container_id := request.ContainerId
 	checkpoint_id := request.CheckpointId
-	err := utils.StartMigratedContainer(container_id, checkpoint_id)
+	function_bundle := request.FunctionBundle
+	image := request.ImageName
+	cpu := request.CPU
+	memory := request.Memory
+	virtual_ip := request.VirtualIP
+	mac_address := request.MacAddress
+	err := utils.StartMigratedContainer(image, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, mac_address, function_bundle, checkpoint_id)
 	if err != nil {
 		return nil, fmt.Errorf("error starting the migrated function: %w", err)
 	}

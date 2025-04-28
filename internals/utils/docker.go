@@ -297,26 +297,62 @@ func CopyFile(src_file string, dst_file string) error {
 	return dst.Sync()
 }
 
-func StartMigratedContainer(container_id string, checkpoint_id string) error {
+func StartMigratedContainer(image_name string, cores []int, memory int, virtual_ip string, network_name string, static_mac string, function_bundle string, checkpoint_id string) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return fmt.Errorf("error creating docker client for remote host: %w", err)
 	}
 	// check if image exists
-	err = CopyContainerFilesToDockerDir(container_id)
-	if err != nil {
-		return fmt.Errorf("error copying checkpoint to docker directory: %w", err)
-	}
-
-	fmt.Printf("container with id: %s\n", container_id)
-
 	// once checkpoint is copied, start the container from the host machine hosting t
 	// transfer check point files from
+	// create container
+	cpuSet := getCoreSet(cores)
 
-	log.Printf("container %s created successfully", container_id)
+	resource_config := container.Resources{
+		Memory:     int64(memory),
+		CpusetCpus: cpuSet,
+	}
 
-	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{
+	network_config := &network.EndpointSettings{
+		IPAMConfig: &network.EndpointIPAMConfig{
+			IPv4Address: virtual_ip,
+		},
+		MacAddress: static_mac,
+	}
+
+	exposed_ports := nat.PortSet{
+		nat.Port(pkg.DEFAULT_CONTAINER_PORT): struct{}{},
+	}
+
+	networking_config := &network.NetworkingConfig{
+		EndpointsConfig: map[string]*network.EndpointSettings{
+			network_name: network_config,
+		},
+	}
+
+	host_config := &container.HostConfig{
+		Resources: resource_config,
+		Binds: []string{
+			fmt.Sprintf("%s:/app", function_bundle),
+		},
+	}
+
+	container_config := &container.Config{
+		Image:        image_name,
+		Cmd:          []string{"sh", "-c", "chmod +x /app/startup.sh && /app/startup.sh"},
+		ExposedPorts: exposed_ports,
+	}
+
+	// create the container
+	res, err := cli.ContainerCreate(ctx, container_config, host_config, networking_config, nil, "")
+
+	if err != nil {
+		return fmt.Errorf("error while creating container: %w", err)
+	}
+	log.Printf("container %s created successfully", res.ID)
+
+	if err := cli.ContainerStart(ctx, res.ID, container.StartOptions{
 		CheckpointID:  checkpoint_id,
 		CheckpointDir: "/home/rajesh/RuntimeManager/checkpoint",
 	}); err != nil {
