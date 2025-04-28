@@ -311,11 +311,12 @@ func StartMigratedContainer(container_id string, checkpoint_id string) error {
 
 	// once checkpoint is copied, start the container from the host machine hosting t
 	// transfer check point files from
-
+	
 	log.Printf("container %s created successfully", container_id)
 
 	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{
-		CheckpointID: checkpoint_id,
+		CheckpointID:  checkpoint_id,
+		CheckpointDir: "/home/rajesh/RuntimeManager/checkpoint",
 	}); err != nil {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
 	}
