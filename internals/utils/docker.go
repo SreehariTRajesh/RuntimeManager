@@ -319,9 +319,7 @@ func StartMigratedContainer(container_id string, checkpoint_name string, mac_add
 
 	log.Printf("container %s created successfully", res.ID)
 
-	if err := cli.ContainerStart(ctx, res.ID, container.StartOptions{
-		CheckpointID: checkpoint_name,
-	}); err != nil {
+	if err := cli.ContainerStart(ctx, res.ID, container.StartOptions{}); err != nil {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
 	}
 	return nil
