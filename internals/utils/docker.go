@@ -170,8 +170,6 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 		return "", fmt.Errorf("error creating a docker client: %w", err)
 	}
 
-	checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_DOCKER_CHECKPOINT_DIR, container_id)
-	config_dir := fmt.Sprintf(pkg.DEFAULT_DOCKER_DIR, container_id)
 	checkPointOpts := types.CheckpointCreateOptions{
 		CheckpointID: fmt.Sprintf("cp-%s", container_id),
 		Exit:         true,
@@ -183,19 +181,11 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 	//
 	log.Println("checkpoint created for container: ", container_id)
 	// checkpoint path
-	checkpoint_path := fmt.Sprintf("%s/%s", checkpoint_dir, fmt.Sprintf("cp-%s", container_id))
-	config_path := fmt.Sprintf("%s/config.v2.json", config_dir)
-	err = TransferCheckpointFiles(checkpoint_path, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
+
+	err = TransferContainerFiles(container_id, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
 
 	if err != nil {
-		return "", fmt.Errorf("error transferring checkpoint files to destination node: %w", err)
-	}
-
-	log.Println("checkpoint files transferred to destination node:", dest_ip)
-
-	err = TransferConfigFiles(config_path, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
-	if err != nil {
-		return "", fmt.Errorf("error transferring config files to destination node: %w", err)
+		return "", fmt.Errorf("error while transferring files to remote host: %w", err)
 	}
 
 	log.Println("config files transferred to destination node:", dest_ip)
@@ -206,6 +196,16 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 	}
 
 	return fmt.Sprintf("cp-%s", container_id), nil
+}
+
+func TransferContainerFiles(container_id string, dst_checkpoint_dir string, dst_ip string) error {
+	src_checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_DOCKER_CONTAINER_PATH, container_id)
+	cmd := fmt.Sprintf("scp -r %s rajesh@%s:%s", src_checkpoint_dir, dst_ip, dst_checkpoint_dir)
+	fmt.Println("Executing command:", cmd)
+	if err := ExecCommand(cmd); err != nil {
+		return fmt.Errorf("error transferring checkpoint files: %w", err)
+	}
+	return nil
 }
 
 func TransferCheckpointFiles(src_checkpoint_dir string, dst_checkpoint_dir string, dest_ip string) error {
@@ -240,6 +240,15 @@ func CopyCheckpointToDockerDir(container_id string, checkpoint_dir string, check
 	err := CopyDirectory(checkpoint_dir, checkpoint_dst)
 	if err != nil {
 		return fmt.Errorf("error copying checkpoint directory: %w", err)
+	}
+	return nil
+}
+
+func CopyContainerFilesToDockerDir(container_id string) error {
+	container_dir := pkg.DEFAULT_DOCKER_CHECKPOINT_DIR
+	err := CopyDirectory(container_dir, fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, container_id))
+	if err != nil {
+		return fmt.Errorf("error copying the container files to docker directory: %w", err)
 	}
 	return nil
 }
