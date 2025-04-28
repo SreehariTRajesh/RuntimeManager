@@ -293,42 +293,28 @@ func CopyFile(src_file string, dst_file string) error {
 	return dst.Sync()
 }
 
-func StartMigratedContainer(container_id string, checkpoint_name string, mac_address string) error {
-	checkpoint_path := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, checkpoint_name)
+func StartMigratedContainer(container_id string, checkpoint_id string) error {
 	ctx := context.Background()
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return fmt.Errorf("error creating docker client for remote host: %w", err)
 	}
 	// check if image exists
-	container_config, err := GetContainerConfigs(container_id)
-
-	if err != nil {
-		return fmt.Errorf("error while getting container configs")
-	}
-	config := container_config.Config
-	host_config := container_config.HostConfig
-	// change the network id to macvlan network id of the current host
-	networking_config := GetNetworkConfigsForMigratedContainer("vxlan-network", container_config.NetworkSettings.Networks, mac_address)
-
-	res, err := cli.ContainerCreate(ctx, config, host_config, networking_config, nil, "")
-
-	if err != nil {
-		return fmt.Errorf("error while creating container from configs: %w", err)
-	}
-
-	fmt.Printf("container with id: %s\n", res.ID)
-
-	err = CopyCheckpointToDockerDir(res.ID, checkpoint_path, checkpoint_name)
+	err = CopyContainerFilesToDockerDir(container_id)
 	if err != nil {
 		return fmt.Errorf("error copying checkpoint to docker directory: %w", err)
 	}
+
+	fmt.Printf("container with id: %s\n", container_id)
+
 	// once checkpoint is copied, start the container from the host machine hosting t
 	// transfer check point files from
 
-	log.Printf("container %s created successfully", res.ID)
+	log.Printf("container %s created successfully", container_id)
 
-	if err := cli.ContainerStart(ctx, res.ID, container.StartOptions{}); err != nil {
+	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{
+		CheckpointID: checkpoint_id,
+	}); err != nil {
 		return fmt.Errorf("error starting the container on remote host: %w", err)
 	}
 	return nil

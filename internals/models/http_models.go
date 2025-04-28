@@ -24,9 +24,8 @@ type MigrateFunctionRequest struct {
 }
 
 type StartMigratedFunctionRequest struct {
-	ContainerId    string `json:"container_id"`
-	CheckPointName string `json:"checkpoint_name"`
-	MacAddress     string `json:"mac_address"`
+	ContainerId  string `json:"container_id"`
+	CheckpointId string `json:"checkpoint_id"`
 }
 
 type StartMigratedFunctionResponse struct {
