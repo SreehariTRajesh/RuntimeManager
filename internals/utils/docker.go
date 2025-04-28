@@ -183,8 +183,10 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 	log.Println("checkpoint created for container: ", container_id)
 	// checkpoint path
 
+	src_checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, container_id)
+
 	checkpoint_dir := fmt.Sprintf(pkg.DEFAULT_CHECKPOINT_DIR, fmt.Sprintf("cp-%s", container_id))
-	err = TransferCheckpointFiles(container_id, checkpoint_dir, dest_ip)
+	err = TransferCheckpointFiles(src_checkpoint_dir, checkpoint_dir, dest_ip)
 
 	if err != nil {
 		return "", fmt.Errorf("error while transferring files to remote host: %w", err)
@@ -311,7 +313,7 @@ func StartMigratedContainer(container_id string, checkpoint_id string) error {
 
 	// once checkpoint is copied, start the container from the host machine hosting t
 	// transfer check point files from
-	
+
 	log.Printf("container %s created successfully", container_id)
 
 	if err := cli.ContainerStart(ctx, container_id, container.StartOptions{
