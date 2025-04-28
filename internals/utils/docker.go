@@ -182,7 +182,7 @@ func MigrateContainer(source_ip string, dest_ip string, container_id string, ima
 	log.Println("checkpoint created for container: ", container_id)
 	// checkpoint path
 
-	err = TransferContainerFiles(container_id, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
+	err = TransferCheckpointFiles(container_id, pkg.DEFAULT_CHECKPOINT_DIR_PARENT, dest_ip)
 
 	if err != nil {
 		return "", fmt.Errorf("error while transferring files to remote host: %w", err)
@@ -370,3 +370,29 @@ func GetContainerConfigs(container_id string) (*types.ContainerJSON, error) {
 	fmt.Println(container_config)
 	return &container_config, nil
 }
+
+/*
+func MigrateContainerV2(src_ip, dest_ip string, container_id string) error {
+	ctx := context.Background()
+	source_docker_host := fmt.Sprintf("tcp://%s:2375", src_ip)
+	destination_docker_host := fmt.Sprintf("tcp://%s:2375", dest_ip)
+	checkpoint_name := uuid.New().String()[:8]
+	source_cli, err := client.NewClientWithOpts(client.WithHost(source_docker_host), client.WithAPIVersionNegotiation())
+	if err != nil {
+		return fmt.Errorf("error creating docker client for source: %s: %w", source_docker_host, err)
+	}
+	defer source_cli.Close()
+	destination_cli, err := client.NewClientWithOpts(client.WithHost(destination_docker_host), client.WithAPIVersionNegotiation())
+	if err != nil {
+		return fmt.Errorf("error creating docker client for source: %s: %w", source_docker_host, err)
+	}
+	defer destination_cli.Close()
+	err = source_cli.CheckpointCreate(ctx, container_id, checkpoint.CreateOptions{
+		CheckpointID: checkpoint_name,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to create checkpoint: %s for container %s: %v", checkpoint_name)
+	}
+	// transfer checkpoint files
+}
+*/
