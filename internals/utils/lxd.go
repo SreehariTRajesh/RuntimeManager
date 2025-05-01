@@ -28,7 +28,7 @@ func CreateAndStartContainerLXD(container_name string, image_name string, cores 
 		return "", fmt.Errorf("error settign backend store type: %w", err)
 	}
 
-	bdev_size, err := lxc.ParseBytes("100MB")
+	bdev_size, err := lxc.ParseBytes("5GB")
 	if err != nil {
 		c.Destroy()
 		return "", fmt.Errorf("error parsing fssize: %w", err)
