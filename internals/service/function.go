@@ -7,6 +7,8 @@ import (
 	"runtime-manager/internals/models"
 	"runtime-manager/internals/pkg"
 	"runtime-manager/internals/utils"
+
+	"github.com/google/uuid"
 )
 
 func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFunctionResponse, error) {
@@ -17,7 +19,10 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 	memory := request.Memory
 	virtual_ip := request.VirtualIP
 	mac_address := request.MacAddress
-	container_id, err := utils.CreateAndStartContainer(image_name, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, mac_address, function_bundle_file_path)
+	gateway := request.Gateway
+	bridge_name := request.VXLanBridgeName
+	container_name := uuid.New().String()[:8]
+	container_id, err := utils.CreateAndStartContainerLXD(container_name, image_name, cpu, memory, virtual_ip, pkg.MACVLAN_NETWORK_NAME, mac_address, function_bundle_file_path, bridge_name, gateway)
 	if err != nil {
 		log.Println("error while creating container:", err)
 		return nil, fmt.Errorf("error while creating container: %w", err)
