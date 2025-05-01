@@ -168,7 +168,7 @@ func CPUCoreSet(cpu []int) string {
 }
 
 func Memory(memory int) string {
-	return fmt.Sprintf("%dM", memory/1e6)
+	return fmt.Sprintf("%dTG", memory/1e9)
 }
 
 func WaitForIPv4(c *lxc.Container, timeout time.Duration, expected_ip string) (string, error) {
