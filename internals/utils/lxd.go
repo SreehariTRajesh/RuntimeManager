@@ -23,7 +23,7 @@ func CreateAndStartContainerLXD(container_name string, image_name string, cores 
 
 	var backend lxc.BackendStore
 
-	if err := (&backend).Set("zfs"); err != nil {
+	if err := (&backend).Set("dir"); err != nil {
 		c.Destroy()
 		return "", fmt.Errorf("error settign backend store type: %w", err)
 	}
@@ -47,7 +47,7 @@ func CreateAndStartContainerLXD(container_name string, image_name string, cores 
 		Backend:              backend,
 		BackendSpecs: &lxc.BackendStoreSpecs{
 			FSSize: uint64(bdev_size),
-			FSType: "zfs",
+			FSType: "dir",
 		},
 	}
 
