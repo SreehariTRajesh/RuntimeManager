@@ -25,13 +25,13 @@ func CreateAndStartContainerLXD(container_name string, image_name string, cores 
 
 	if err := (&backend).Set("zfs"); err != nil {
 		c.Destroy()
-		return "", fmt.Errorf("error settign backend store type", err)
+		return "", fmt.Errorf("error settign backend store type: %w", err)
 	}
 
-	bdev_size, err := lxc.ParseBytes("100M")
+	bdev_size, err := lxc.ParseBytes("100MB")
 	if err != nil {
 		c.Destroy()
-		return "", fmt.Errorf("error parsing fssize:", err)
+		return "", fmt.Errorf("error parsing fssize: %w", err)
 	}
 
 	cpu := CPUCoreSet(cores)
@@ -168,7 +168,7 @@ func CPUCoreSet(cpu []int) string {
 }
 
 func Memory(memory int) string {
-	return fmt.Sprintf("%dTG", memory/1e9)
+	return fmt.Sprintf("%dM", memory/1e6)
 }
 
 func WaitForIPv4(c *lxc.Container, timeout time.Duration, expected_ip string) (string, error) {
