@@ -42,8 +42,8 @@ func CreateAndStartContainerLXD(container_name string, image_name string, cores 
 		Distro:               "ubuntu",
 		Release:              "focal",
 		Arch:                 "amd64",
-		FlushCache:           false,
-		DisableGPGValidation: true,
+		FlushCache:           true,
+		DisableGPGValidation: false,
 		Backend:              backend,
 		BackendSpecs: &lxc.BackendStoreSpecs{
 			FSSize: uint64(bdev_size),
