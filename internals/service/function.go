@@ -38,7 +38,14 @@ func StartMigratedFunction(request *models.StartMigratedFunctionRequest) (*model
 }
 
 func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionResponse, error) {
-	return nil, nil
+	id := request.ContainerId
+	err := utils.DeleteContainerFunction(id)
+	if err != nil {
+		return nil, fmt.Errorf("error while deleting container: %w", err)
+	}
+	return &models.DeleteFunctionResponse{
+		Result: "deletion successful",
+	}, nil
 }
 
 func UpdateResources(request *models.UpdateFunctionRequest) (*models.UpdateFunctionResponse, error) {

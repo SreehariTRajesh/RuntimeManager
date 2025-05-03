@@ -4,14 +4,13 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/containers/common/libnetwork/types"
 	"github.com/containers/podman/v5/pkg/bindings"
 	"github.com/containers/podman/v5/pkg/bindings/containers"
+	"github.com/containers/podman/v5/pkg/bindings/images"
 	"github.com/containers/podman/v5/pkg/specgen"
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
@@ -19,20 +18,27 @@ import (
 func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu []int, mem int64, virt_ip string, mac string) (string, error) {
 	socket := "unix:///run/podman/podman.sock"
 	log.Println("getting new connection")
-	ctx := context.Background()
-	_, err := bindings.NewConnection(ctx, socket)
+	ctx, err := bindings.NewConnection(context.Background(), socket)
 	log.Println("got new connection")
 	if err != nil {
 		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
 	fmt.Println("Connected to socket successfully")
-	spec := specgen.NewSpecGenerator("python:3.9-slim", true)
-	*spec.Terminal = true
-	spec.ResourceLimits.CPU.Cpus = GetCoreSet(cpu)
-	spec.ResourceLimits.Memory = &specs.LinuxMemory{Limit: &mem}
-	spec.Networks["vxlan-overlay"] = types.PerNetworkOptions{
-		StaticIPs: []net.IP{net.ParseIP(virt_ip)},
-		StaticMAC: types.HardwareAddr(mac),
+	rawImage := "registry.fedoraproject.org/fedora:latest"
+	fmt.Println("Pulling Fedora image...")
+	_, err = images.Pull(ctx, rawImage, &images.PullOptions{})
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	spec := specgen.NewSpecGenerator(rawImage, false)
+	spec.ResourceLimits = &specs.LinuxResources{
+		CPU: &specs.LinuxCPU{
+			Cpus: GetCoreSet(cpu),
+		},
+		Memory: &specs.LinuxMemory{
+			Limit: &mem,
+		},
 	}
 	res, err := containers.CreateWithSpec(ctx, spec, &containers.CreateOptions{})
 	if err != nil {
@@ -46,8 +52,7 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 }
 
 func DeleteContainerFunction(container_id string) error {
-	sock_dir := os.Getenv("XDG_RUNTIME_DIR")
-	socket := "unix:" + sock_dir + "/podman/podman.sock"
+	socket := "unix:///run/podman/podman.sock"
 	ctx := context.Background()
 	_, err := bindings.NewConnection(ctx, socket)
 	if err != nil {

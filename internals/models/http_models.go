@@ -1,13 +1,13 @@
 package models
 
 type CreateFunctionRequest struct {
-	FunctionName    string `json:"function_name"`
-	FunctionBundle  string `json:"function_bundle"`
-	ImageName       string `json:"image_name"`
-	CPU             []int  `json:"cpu"`
-	Memory          int    `json:"memory"`
-	VirtualIP       string `json:"virtual_ip"`
-	MacAddress      string `json:"mac_address"`
+	FunctionName   string `json:"function_name"`
+	FunctionBundle string `json:"function_bundle"`
+	ImageName      string `json:"image_name"`
+	CPU            []int  `json:"cpu"`
+	Memory         int    `json:"memory"`
+	VirtualIP      string `json:"virtual_ip"`
+	MacAddress     string `json:"mac_address"`
 }
 
 type CreateFunctionResponse struct {
@@ -65,7 +65,7 @@ type InvokeFunctionResponse struct {
 }
 
 type DeleteFunctionRequest struct {
-	ContainerIds []string `json:"container_ids"`
+	ContainerId string `json:"container_id"`
 }
 
 type DeleteFunctionResponse struct {
