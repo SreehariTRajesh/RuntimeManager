@@ -22,6 +22,7 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 	if err != nil {
 		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
+	fmt.Println("Connected to socket successfully")
 	spec := specgen.NewSpecGenerator("python:3.9-slim", true)
 	*spec.Terminal = true
 	spec.ResourceLimits.CPU.Cpus = GetCoreSet(cpu)
