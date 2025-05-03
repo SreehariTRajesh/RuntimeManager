@@ -23,15 +23,12 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 	if err != nil {
 		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
-	fmt.Println("Connected to socket successfully")
-	rawImage := "registry.fedoraproject.org/fedora:latest"
-	fmt.Println("Pulling Fedora image...")
-	_, err = images.Pull(ctx, rawImage, &images.PullOptions{})
+	_, err = images.Pull(ctx, image, &images.PullOptions{})
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	spec := specgen.NewSpecGenerator(rawImage, false)
+	spec := specgen.NewSpecGenerator(image, false)
 	spec.ResourceLimits = &specs.LinuxResources{
 		CPU: &specs.LinuxCPU{
 			Cpus: GetCoreSet(cpu),
@@ -53,8 +50,7 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 
 func DeleteContainerFunction(container_id string) error {
 	socket := "unix:///run/podman/podman.sock"
-	ctx := context.Background()
-	_, err := bindings.NewConnection(ctx, socket)
+	ctx, err := bindings.NewConnection(context.Background(), socket)
 	if err != nil {
 		return fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
