@@ -16,7 +16,7 @@ import (
 )
 
 func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu []int, mem int64, virt_ip string, mac string) (string, error) {
-	socket := "unix:///run/podman/podman.socket"
+	socket := "unix:///run/podman/podman.sock"
 	ctx := context.Background()
 	_, err := bindings.NewConnection(ctx, socket)
 	if err != nil {
