@@ -39,6 +39,9 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 			Limit: &mem,
 		},
 	}
+	spec.NetworkOptions = map[string][]string{
+		"network": {"vxlan-overlay"},
+	}
 	res, err := containers.CreateWithSpec(ctx, spec, &containers.CreateOptions{})
 	if err != nil {
 		return "", fmt.Errorf("error while creating a container with spec: %w", err)
@@ -67,8 +70,11 @@ func DeleteContainerFunction(container_id string) error {
 	return nil
 }
 
-func ExecFunction(virtual_ip string, params map[string]any) (map[string]any, error) {
+func MigrateContainerFunction(container_id string, source_ip string, destination_ip string) error {
+	return nil
+}
 
+func ExecFunction(virtual_ip string, params map[string]any) (map[string]any, error) {
 	return nil, nil
 }
 
