@@ -90,13 +90,14 @@ func MigrateContainerFunction(container_id string, source_ip string, destination
 	return nil
 }
 
-func TransferCheckpointFiles(checkpoint_dir string, destination_ip string) error {
-	
-	return nil
+func TransferCheckpointFiles(container_id string, checkpoint_dir string, destination_ip string) error {
+	user := "root"
+	password := "root"
+	return TransferFilesSFTP(container_id, destination_ip, user, password)
 }
 
 func ExecFunction(virtual_ip string, params map[string]any) (map[string]any, error) {
-	return nil, nil
+	return MakeHttpRequest(virtual_ip, 80, params)
 }
 
 func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any, error) {
