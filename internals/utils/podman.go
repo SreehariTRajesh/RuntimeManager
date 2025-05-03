@@ -3,6 +3,7 @@ package utils
 import (
 	"context"
 	"fmt"
+	"log"
 	"net"
 	"os"
 	"strconv"
@@ -17,8 +18,10 @@ import (
 
 func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu []int, mem int64, virt_ip string, mac string) (string, error) {
 	socket := "unix:///run/podman/podman.sock"
+	log.Println("getting new connection")
 	ctx := context.Background()
 	_, err := bindings.NewConnection(ctx, socket)
+	log.Println("got new connection")
 	if err != nil {
 		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
