@@ -1,9 +1,13 @@
 package utils
 
 import (
+	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
-	"log"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -17,9 +21,7 @@ import (
 
 func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu []int, mem int64, virt_ip string, mac string) (string, error) {
 	socket := "unix:///run/podman/podman.sock"
-	log.Println("getting new connection")
 	ctx, err := bindings.NewConnection(context.Background(), socket)
-	log.Println("got new connection")
 	if err != nil {
 		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
@@ -63,6 +65,58 @@ func DeleteContainerFunction(container_id string) error {
 		return fmt.Errorf("error while trying to remove container: %w", err)
 	}
 	return nil
+}
+
+func ExecFunction(virtual_ip string, params map[string]any) (map[string]any, error) {
+
+	return nil, nil
+}
+
+func MakeHttpRequest(ip string, port int, params map[string]any) (map[string]any, error) {
+	host := fmt.Sprintf("%s:%d", ip, port)
+	path := "/invoke"
+	scheme := "http"
+	baseURL := &url.URL{
+		Scheme: scheme,
+		Host:   host,
+		Path:   path,
+	}
+
+	http_url := baseURL.String()
+	request_body, err := json.Marshal(params)
+	if err != nil {
+		return nil, fmt.Errorf("error while marshalling the request body %v: %w", params, err)
+	}
+
+	client := &http.Client{}
+	req, err := http.NewRequest("POST", http_url, bytes.NewBuffer(request_body))
+
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	res, err := client.Do(req)
+
+	if err != nil {
+		return nil, fmt.Errorf("error making http request: %w", err)
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return nil, fmt.Errorf("error while reading response: %w", err)
+	}
+
+	var response map[string]any
+
+	err = json.Unmarshal(body, &response)
+
+	if err != nil {
+		return nil, fmt.Errorf("error while umarshalling json response: %w", err)
+	}
+	return response, nil
 }
 
 func GetCoreSet(cpus []int) string {
