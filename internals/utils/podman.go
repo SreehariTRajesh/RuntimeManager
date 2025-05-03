@@ -71,6 +71,27 @@ func DeleteContainerFunction(container_id string) error {
 }
 
 func MigrateContainerFunction(container_id string, source_ip string, destination_ip string) error {
+	socket := "unix:///run/podman/podman.sock"
+	ctx, err := bindings.NewConnection(context.Background(), socket)
+	if err != nil {
+		return fmt.Errorf("error while connecting to podman socket: %w", err)
+	}
+	tcp_established := true
+	leave_running := false
+	export_dir := fmt.Sprintf("/tmp/%s.tar.gz", container_id)
+	_, err = containers.Checkpoint(ctx, container_id, &containers.CheckpointOptions{
+		TCPEstablished: &tcp_established,
+		LeaveRunning:   &leave_running,
+		Export:         &export_dir,
+	})
+	if err != nil {
+		return fmt.Errorf("error creating checkpoint: %w", err)
+	}
+	return nil
+}
+
+func TransferCheckpointFiles(checkpoint_dir string, destination_ip string) error {
+	
 	return nil
 }
 
