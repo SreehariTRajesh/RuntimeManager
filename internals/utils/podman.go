@@ -78,14 +78,18 @@ func MigrateContainerFunction(container_id string, source_ip string, destination
 	}
 	tcp_established := true
 	leave_running := false
-	export_dir := fmt.Sprintf("/tmp/%s.tar.gz", container_id)
+	export_file_path := fmt.Sprintf("/tmp/%s.tar.gz", container_id)
 	_, err = containers.Checkpoint(ctx, container_id, &containers.CheckpointOptions{
 		TCPEstablished: &tcp_established,
 		LeaveRunning:   &leave_running,
-		Export:         &export_dir,
+		Export:         &export_file_path,
 	})
 	if err != nil {
 		return fmt.Errorf("error creating checkpoint: %w", err)
+	}
+	err = TransferCheckpointFiles(container_id, export_file_path, destination_ip)
+	if err != nil {
+		return fmt.Errorf("error transferring checkpoint fiels: %w", err)
 	}
 	return nil
 }
@@ -153,4 +157,20 @@ func GetCoreSet(cpus []int) string {
 		cpu_array = append(cpu_array, strconv.Itoa(core))
 	}
 	return strings.Join(cpu_array, ",")
+}
+
+func StartMigratedContainer(container_id string) (string, error) {
+	socket := "unix:///run/podman/podman.sock"
+	ctx, err := bindings.NewConnection(context.Background(), socket)
+	if err != nil {
+		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
+	}
+	import_archive := fmt.Sprintf("/tmp/%s.tar.gz", container_id)
+	_, err = containers.Restore(ctx, container_id, &containers.RestoreOptions{
+		ImportArchive: &import_archive,
+	})
+	if err != nil {
+		return "", fmt.Errorf("error while restoring container from checkpoint: %w", err)
+	}
+	return container_id, nil
 }

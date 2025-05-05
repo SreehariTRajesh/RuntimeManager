@@ -30,11 +30,28 @@ func InvokeFunction(request *models.InvokeFunctionRequest) (*models.InvokeFuncti
 }
 
 func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFunctionResponse, error) {
-	return nil, nil
+	container_id := request.ContainerId
+	dest_ip := request.DestinationIP
+	source_ip := request.SourceIP
+	err := utils.MigrateContainerFunction(container_id, source_ip, dest_ip)
+	if err != nil {
+		return nil, fmt.Errorf("error whiel migrating function from one node to another: %w", err)
+	}
+	return &models.MigrateFunctionResponse{
+		Message:        "migration completed successfully",
+		CheckPointName: "",
+	}, nil
 }
 
 func StartMigratedFunction(request *models.StartMigratedFunctionRequest) (*models.StartMigratedFunctionResponse, error) {
-	return nil, nil
+	container_id := request.ContainerId
+	_, err := utils.StartMigratedContainer(container_id)
+	if err != nil {
+		return nil, fmt.Errorf("error starting migrated function: %w", err)
+	}
+	return &models.StartMigratedFunctionResponse{
+		Message: "migrated function started successfully",
+	}, nil
 }
 
 func DeleteFunction(request *models.DeleteFunctionRequest) (*models.DeleteFunctionResponse, error) {
