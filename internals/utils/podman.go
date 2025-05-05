@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"os"
@@ -16,6 +17,7 @@ import (
 	"github.com/containers/podman/v5/pkg/bindings/containers"
 	"github.com/containers/podman/v5/pkg/bindings/images"
 	"github.com/containers/podman/v5/pkg/specgen"
+
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
@@ -25,10 +27,17 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 	if err != nil {
 		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
-	_, err = images.Pull(ctx, image, &images.PullOptions{})
+	imageExists, err := images.Exists(ctx, image, &images.ExistsOptions{})
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return "", fmt.Errorf("error while checking if image exists: %w", err)
+	}
+	if !imageExists {
+		log.Printf("image %s does not exist, pulling the image", image)
+		_, err = images.Pull(ctx, image, &images.PullOptions{})
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 	}
 	spec := specgen.NewSpecGenerator(image, false)
 	spec.ResourceLimits = &specs.LinuxResources{
