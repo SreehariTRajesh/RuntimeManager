@@ -7,12 +7,14 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/containers/common/libnetwork/types"
 	"github.com/containers/podman/v5/pkg/bindings"
 	"github.com/containers/podman/v5/pkg/bindings/containers"
 	"github.com/containers/podman/v5/pkg/bindings/images"
@@ -48,9 +50,18 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 			Limit: &mem,
 		},
 	}
-	spec.NetworkOptions = map[string][]string{
-		"network": {"vxlan-overlay"},
+	hwaddr, err := net.ParseMAC(mac)
+	if err != nil {
+		return "", fmt.Errorf("error while parsing mac address: %w", err)
 	}
+
+	spec.Networks = map[string]types.PerNetworkOptions{
+		"vxlan-overlay": {
+			StaticIPs: []net.IP{net.ParseIP(virt_ip)},
+			StaticMAC: types.HardwareAddr(hwaddr),
+		},
+	}
+
 	res, err := containers.CreateWithSpec(ctx, spec, &containers.CreateOptions{})
 	if err != nil {
 		return "", fmt.Errorf("error while creating a container with spec: %w", err)
