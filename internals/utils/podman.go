@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"net/url"
 	"os"
@@ -50,16 +49,12 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 			Limit: &mem,
 		},
 	}
-	hwaddr, err := net.ParseMAC(mac)
 	if err != nil {
 		return "", fmt.Errorf("error while parsing mac address: %w", err)
 	}
 
 	spec.Networks = map[string]types.PerNetworkOptions{
-		"vxlan-overlay": {
-			StaticIPs: []net.IP{net.ParseIP(virt_ip)},
-			StaticMAC: types.HardwareAddr(hwaddr),
-		},
+		"vxlan-overlay": {},
 	}
 
 	res, err := containers.CreateWithSpec(ctx, spec, &containers.CreateOptions{})
