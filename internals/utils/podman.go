@@ -106,6 +106,11 @@ func MigrateContainerFunction(container_id string, source_ip string, destination
 	if err != nil {
 		return fmt.Errorf("error transferring checkpoint fiels: %w", err)
 	}
+
+	_, err = containers.Remove(ctx, container_id, &containers.RemoveOptions{})
+	if err != nil {
+		return fmt.Errorf("error while trying to remove container: %w", err)
+	}
 	return nil
 }
 
