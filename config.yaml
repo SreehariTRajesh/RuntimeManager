@@ -16,8 +16,9 @@ vxlan-config:
       dst-port: 4789
       device: enp1s0
 
-cni-network-config:
+cni-network:
   name: vxlan-network
   subnet: 10.10.0.0/24
   gateway: 10.10.0.1
-  parent: br0
+  network-interface: br0
+  driver: bridge
