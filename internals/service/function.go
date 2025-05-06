@@ -26,7 +26,16 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 }
 
 func InvokeFunction(request *models.InvokeFunctionRequest) (*models.InvokeFunctionResponse, error) {
-	return nil, nil
+	container_ip := request.ContainerIP
+	params := request.Params
+	result, err := utils.ExecFunction(container_ip, params)
+	if err != nil {
+		return nil, fmt.Errorf("error while invoking function: %w", err)
+	}
+	return &models.InvokeFunctionResponse{
+		Result: result,
+		Error:  "",
+	}, nil
 }
 
 func MigrateFunction(request *models.MigrateFunctionRequest) (*models.MigrateFunctionResponse, error) {
