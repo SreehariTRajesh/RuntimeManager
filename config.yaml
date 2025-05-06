@@ -17,7 +17,7 @@ vxlan-config:
       device: enp1s0
 
 cni-network:
-  name: vxlan-network
+  name: vxlan-overlay
   subnet: 10.10.0.0/24
   gateway: 10.10.0.1
   network-interface: br0
