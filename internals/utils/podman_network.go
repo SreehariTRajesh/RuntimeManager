@@ -10,7 +10,7 @@ import (
 	"github.com/containers/podman/v5/pkg/bindings/network"
 )
 
-func CreatePodmanNetwork(network_name string, subnet string, gateway string, driver string) error {
+func CreatePodmanNetwork(network_name string, subnet string, gateway string, driver string, iface string) error {
 	socket := "unix:///run/podman/podman.sock"
 	ctx, err := bindings.NewConnection(context.Background(), socket)
 	if err != nil {
@@ -22,9 +22,9 @@ func CreatePodmanNetwork(network_name string, subnet string, gateway string, dri
 	}
 	gw := net.ParseIP(gateway)
 	opts := types.Network{
-		Name:             "vxaln-overlay",
-		Driver:           "bridge",
-		NetworkInterface: "br0",
+		Name:             network_name,
+		Driver:           driver,
+		NetworkInterface: iface,
 		Subnets: []types.Subnet{
 			{
 				Subnet:  sub,
@@ -37,5 +37,19 @@ func CreatePodmanNetwork(network_name string, subnet string, gateway string, dri
 		return fmt.Errorf("error creating network '%s': %w", network_name, err)
 	}
 	fmt.Printf("Network %s created successfully: %v\n", network_name, report)
+	return nil
+}
+
+func DestroyPodmanNetwork(network_name string) error {
+	socket := "unix:///run/podman/podman.sock"
+	ctx, err := bindings.NewConnection(context.Background(), socket)
+	if err != nil {
+		return fmt.Errorf("error connecting to podman socket '%s': %w", socket, err)
+	}
+	_, err = network.Remove(ctx, network_name, nil)
+	if err != nil {
+		return fmt.Errorf("error removing network '%s': %w", network_name, err)
+	}
+	fmt.Printf("Network %s removed successfully\n", network_name)
 	return nil
 }

@@ -1,10 +1,9 @@
 package models
 
 type Config struct {
-	HostConf                 HostConfig                 `yaml:"host-config"`
-	VXLanConf                VXLanConfig                `yaml:"vxlan-config"`
-	MacVLANNetworkConf       MacVLANNetworkConfig       `yaml:"macvlan-network-config"`
-	HostMacVLANInterfaceConf HostMacVLANInterfaceConfig `yaml:"host-macvlan"`
+	HostConf  HostConfig       `yaml:"host-config"`
+	VXLanConf VXLanConfig      `yaml:"vxlan-config"`
+	CNI       CNINetworkConfig `yaml:"cni-network"`
 }
 
 type HostConfig struct {
@@ -25,15 +24,10 @@ type VXLanPeer struct {
 	Device  string `yaml:"device"`
 }
 
-type MacVLANNetworkConfig struct {
-	Name    string `yaml:"name"`
-	Subnet  string `yaml:"subnet"`
-	Gateway string `yaml:"gateway"`
-	Parent  string `yaml:"parent"`
-}
-
-type HostMacVLANInterfaceConfig struct {
-	Name            string `yaml:"name"`
-	ParentInterface string `yaml:"parent-interface"`
-	IPAddress       string `yaml:"ip-address"`
+type CNINetworkConfig struct {
+	Name      string `yaml:"name"`
+	Interface string `yaml:"network-interface"`
+	Subnet    string `yaml:"subnet"`
+	Gateway   string `yaml:"gateway"`
+	Driver    string `yaml:"driver"`
 }

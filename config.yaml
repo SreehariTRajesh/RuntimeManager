@@ -16,14 +16,8 @@ vxlan-config:
       dst-port: 4789
       device: enp1s0
 
-macvlan-network-config:
+cni-network-config:
   name: vxlan-network
-  subnet: 10.1.1.0/24
-  gateway: 10.1.1.1
+  subnet: 10.10.0.0/24
+  gateway: 10.10.0.1
   parent: br0
-
-host-macvlan:
-  name: macvlan0
-  parent-interface: br0
-  ip-address: 10.1.1.80/24
-
