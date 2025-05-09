@@ -6,8 +6,6 @@ type CreateFunctionRequest struct {
 	ImageName      string `json:"image_name"`
 	CPU            []int  `json:"cpu"`
 	Memory         int    `json:"memory"`
-	VirtualIP      string `json:"virtual_ip"`
-	MacAddress     string `json:"mac_address"`
 }
 
 type CreateFunctionResponse struct {
@@ -24,14 +22,11 @@ type MigrateFunctionRequest struct {
 }
 
 type StartMigratedFunctionRequest struct {
-	ContainerId    string `json:"container_id"`
-	CheckpointId   string `json:"checkpoint_id"`
-	FunctionBundle string `json:"function_bundle"`
-	ImageName      string `json:"image_name"`
-	CPU            []int  `json:"cpu"`
-	Memory         int    `json:"memory"`
-	VirtualIP      string `json:"virtual_ip"`
-	MacAddress     string `json:"mac_address"`
+	ContainerId  string `json:"container_id"`
+	CheckpointId string `json:"checkpoint_id"`
+	ImageName    string `json:"image_name"`
+	CPU          []int  `json:"cpu"`
+	Memory       int    `json:"memory"`
 }
 
 type StartMigratedFunctionResponse struct {

@@ -12,16 +12,14 @@ func CreateFunction(request *models.CreateFunctionRequest) (*models.CreateFuncti
 	image_name := request.ImageName
 	cpu := request.CPU
 	memory := request.Memory
-	virt_ip := request.VirtualIP
-	mac := request.MacAddress
-	cid, err := utils.CreateContainerFunction(fn_name, fn_bundle, image_name, cpu, int64(memory), virt_ip, mac)
+	cid, ip_address, err := utils.CreateContainerFunction(fn_name, fn_bundle, image_name, cpu, int64(memory))
 	if err != nil {
 		return nil, fmt.Errorf("error while creating function response: %w", err)
 	}
 	return &models.CreateFunctionResponse{
 		FunctionName: fn_name,
 		ContainerId:  cid,
-		ContainerIP:  virt_ip,
+		ContainerIP:  ip_address,
 	}, nil
 }
 

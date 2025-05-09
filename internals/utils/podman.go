@@ -22,15 +22,15 @@ import (
 	"github.com/opencontainers/runtime-spec/specs-go"
 )
 
-func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu []int, mem int64, virt_ip string, mac string) (string, error) {
+func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu []int, mem int64) (string, string, error) {
 	socket := "unix:///run/podman/podman.sock"
 	ctx, err := bindings.NewConnection(context.Background(), socket)
 	if err != nil {
-		return "", fmt.Errorf("error while connecting to podman socket: %w", err)
+		return "", "", fmt.Errorf("error while connecting to podman socket: %w", err)
 	}
 	imageExists, err := images.Exists(ctx, image, &images.ExistsOptions{})
 	if err != nil {
-		return "", fmt.Errorf("error while checking if image exists: %w", err)
+		return "", "", fmt.Errorf("error while checking if image exists: %w", err)
 	}
 	if !imageExists {
 		log.Printf("image %s does not exist, pulling the image", image)
@@ -50,7 +50,7 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 		},
 	}
 	if err != nil {
-		return "", fmt.Errorf("error while parsing mac address: %w", err)
+		return "", "", fmt.Errorf("error while parsing mac address: %w", err)
 	}
 
 	spec.Networks = map[string]types.PerNetworkOptions{
@@ -59,13 +59,19 @@ func CreateContainerFunction(fn_name string, fn_bundle string, image string, cpu
 
 	res, err := containers.CreateWithSpec(ctx, spec, &containers.CreateOptions{})
 	if err != nil {
-		return "", fmt.Errorf("error while creating a container with spec: %w", err)
+		return "", "", fmt.Errorf("error while creating a container with spec: %w", err)
 	}
 	err = containers.Start(ctx, res.ID, &containers.StartOptions{})
 	if err != nil {
-		return "", fmt.Errorf("error while creating a container with spec: %w", err)
+		return "", "", fmt.Errorf("error while creating a container with spec: %w", err)
 	}
-	return res.ID, nil
+
+	inspect, err := containers.Inspect(ctx, res.ID, &containers.InspectOptions{})
+	if err != nil {
+		return "", "", fmt.Errorf("error while inspecting the container: %w", err)
+	}
+	network := inspect.NetworkSettings
+	return res.ID, network.IPAddress, nil
 }
 
 func DeleteContainerFunction(container_id string) error {
